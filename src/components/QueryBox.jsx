@@ -2,73 +2,65 @@ import React, { useState } from "react";
 import { FiEdit } from "react-icons/fi";
 
 export const QueryBox = ({ sqlQuery }) => {
-  const [showPopup, setShowPopup] = useState(false);
-  // if (!sqlQuery) {
-  //   return null; // Don't render if sqlQuery is not provided
-  // }
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editableQuery, setEditableQuery] = useState(sqlQuery || "");
 
+  const handleEditClick = () => {
+    setEditableQuery(sqlQuery);
+    setIsModalOpen(true);
+  };
+  const handleSave = () => {
+    setIsModalOpen(false);
+  };
+  if (!sqlQuery) return null;
   return (
     <>
-      <div className="flex items-center  space-x-2 mt-5 mb-7 max-w-4xl ml-3">
-        <h3>Query Script</h3>
-        {(!sqlQuery && (
-          <>
-            <input
-              type="text"
-              placeholder="Enter your Query...."
-              className={`transition-all duration-300 ease-in-out px-3 py-2 border rounded-lg w-full bg-black text-amber-500
-         `}
-            />
+      {isModalOpen ? (
+        <>
+          <textarea
+            value={editableQuery}
+            onChange={(e) => setEditableQuery(e.target.value)}
+            rows={12}
+            className="w-full p-3 bg-black text-yellow-300 border border-yellow-500 rounded resize-none"
+          />
+          <div className="flex justify-end mt-2 space-x-2">
             <button
-              onClick={() => setShowPopup(true)}
-              className="text-gray-600 hover::text-black transition"
-              title="Expand"
+              onClick={() => setIsModalOpen(false)}
+              className="bg-gray-500 text-white px-4 py-1 rounded"
             >
-              <FiEdit size={20} />
+              Cancel
             </button>
-          </>
-        )) || (
-          <>
-            <input
-              type="text"
-              placeholder="Enter your Query...."
-              className={`transition-all duration-300 ease-in-out px-3 py-2 border rounded-lg w-full bg-black text-amber-500
-         `}
-            />
             <button
-              onClick={() => setShowPopup(true)}
-              className="text-gray-600 hover::text-black transition"
-              title="Expand"
+              onClick={handleSave}
+              className="bg-green-600 text-white px-4 py-1 rounded"
             >
-              <FiEdit size={20} />
+              Save
             </button>
-          </>
-        )}
-
-        {showPopup && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 item-center justify-center z-50">
-            <div className="bg-black text-amber-500 p-6 rounded-lg max-w-4xl shadow-lg relative">
-              <textarea
-                className="max-w-4xl h-48 p-4 bg-black text-amber-500
-            border border-black rounded resize-none"
-                name="query"
-                id="query"
+          </div>
+        </>
+      ) : (
+        <>
+          <h2 className="text-lg">Query Script</h2>
+          <div className="">
+            <div className="flex justify-between items-center mb-2">
+              <input
+                type="text"
                 value={sqlQuery}
-                placeholder="write your query here ...."
-              ></textarea>
+                readOnly
+                className="w-full p-2 bg-black text-yellow-300 font-mono rounded border border-yellow-500 truncate"
+              />
               <button
-                onClick={() => setShowPopup(false)}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded"
+                onClick={handleEditClick}
+                className=" text-black px-3 py-1 rounded text-sm"
               >
-                Close
-              </button>
-              <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded">
-                Run Query
+                <FiEdit className="inline mr-1" size={30} />
               </button>
             </div>
           </div>
-        )}
-      </div>
+        </>
+      )}
     </>
   );
 };
+
+export default QueryBox;

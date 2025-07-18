@@ -15,6 +15,7 @@ export const QueryBox = ({ sqlQuery }) => {
   if (!sqlQuery) return null;
   return (
     <>
+      <h2 className="text-lg">Query Script</h2>
       {isModalOpen ? (
         <>
           <textarea
@@ -40,7 +41,6 @@ export const QueryBox = ({ sqlQuery }) => {
         </>
       ) : (
         <>
-          <h2 className="text-lg">Query Script</h2>
           <div className="">
             <div className="flex justify-between items-center mb-2">
               <input

@@ -1,25 +1,30 @@
 import { FaChevronDown } from "react-icons/fa";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const DbSelection = () => {
+const DbSelection = ({ onDbChange }) => {
   const options = ["Selected Database", "Big Query DB", "Mongo DB"];
   const [selected, setSelected] = useState(options[0]);
   const [open, setOpen] = useState(false);
+  useEffect(() => {
+    onDbChange(selected);
+  }, [selected, onDbChange]); // Call onDbChange when selected changes
+
   return (
-    <div className="relative  text-left ">
-      <div htmlFor="" className="m-1">
-        Select your DataBase
+    <div className="relative text-left w-85">
+      {" "}
+      {/* Set a fixed width */}
+      <div className="m-1 text-sm font-medium text-gray-700">
+        Select your Database
       </div>
       <button
         onClick={() => setOpen(!open)}
-        className="border-white text-green-700 border-1  px-4 py-2 rounded inline-flex items-center gap-2 shadow"
+        className="w-full border border-gray-300 text-green-700 px-4 py-2 rounded flex justify-between items-center shadow"
       >
         <span>{selected}</span>
         <FaChevronDown />
       </button>
-
       {open && (
-        <div className="absolute mt-2 w-48 bg-white border rounded shadow z-10">
+        <div className="absolute mt-1 w-full bg-white border rounded shadow z-10">
           {options.map((option) => (
             <div
               key={option}

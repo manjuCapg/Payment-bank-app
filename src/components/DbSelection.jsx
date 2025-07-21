@@ -10,9 +10,9 @@ const DbSelection = ({ onDbChange }) => {
   }, [selected, onDbChange]); // Call onDbChange when selected changes
 
   return (
-    <div className="relative text-left w-85">
+    <div className="relative text-left w-68">
       {" "}
-      {/* Set a fixed width */}
+      {/* Set a fixed width */} {/* Set a fixed width */}
       <div className="m-1 text-sm font-medium text-gray-700">
         Select your Database
       </div>

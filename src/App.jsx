@@ -11,15 +11,15 @@ function App() {
   const [query, setQuery] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [responseData, setResponseData] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true); // NEW
 
   const handleSend = () => {
     if (!query.trim()) return;
 
-    //Add user query to chat history
     const updatedHistory = [...chatHistory, { text: query, isUser: true }];
     setChatHistory(updatedHistory);
     setQuery("");
-    // Simulate API response
+
     setTimeout(() => {
       setChatHistory((prev) => [
         ...prev,
@@ -30,10 +30,21 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <Header />
-      <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-3 gap-3 h-full">
-        <div className="lg:col-span-1">
+    <div className="min-h-screen bg-gray-100 ">
+      <Header
+        onToggleSidebar={() => {
+          console.log("Toggle Sidebar", sidebarOpen);
+          setSidebarOpen(!sidebarOpen);
+        }}
+      />
+
+      <div className="flex">
+        {/* Sidebar */}
+        <div
+          className={`transition-all duration-300 ease-in-out ${
+            sidebarOpen ? "w-80" : "w-0"
+          } overflow-hidden`}
+        >
           <Sidebar
             query={query}
             onSend={handleSend}
@@ -41,7 +52,8 @@ function App() {
             chatHistory={chatHistory}
           />
         </div>
-        <div className="lg:col-span-2 md:col-span-1 space-y-8">
+        {/* Main Content */}
+        <div className="flex-1 p-4 space-y-8 ">
           <Instructions />
           <QueryBox sqlQuery={responseData?.sqlQuery} />
           <DataTable data={responseData?.tabularData} />

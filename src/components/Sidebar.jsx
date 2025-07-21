@@ -1,9 +1,4 @@
-import {
-  FaMicrophone,
-  FaPaperPlane,
-  FaExclamationTriangle,
-  FaDatabase,
-} from "react-icons/fa";
+import { FaMicrophone, FaPaperPlane, FaDatabase } from "react-icons/fa";
 import DbSelection from "./DbSelection";
 import React, { useState } from "react";
 
@@ -27,72 +22,72 @@ const Sidebar = ({ query, setQuery, onSend, chatHistory }) => {
       setError("");
     }
 
-    console.log("Form submitted with query:", query);
+    onSend(); // Trigger the send function
   };
+
   return (
-    <div className="bg-white  shadow space-y-4 h-screen">
-      <div className=" gap-2 bg-white p-2 rounded shadow flex flex-col">
-        <div className="flex-1 overflow-y-auto px-2 space-y-2">
-          {chatHistory?.map((msg, index) => (
+    <div className="flex flex-col h-[calc(100vh-4rem)]  bg-white shadow">
+      {/* Chat messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {chatHistory?.length > 0 ? (
+          chatHistory.map((msg, index) => (
             <div
               key={index}
-              className={`flex ${msg.isUser ? "justify-start" : "justify-end"}`}
+              className={`flex ${msg.isUser ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`p-2 rounded shadow max-w-xs ${
+                className={`px-4 py-2 rounded-lg max-w-md shadow ${
                   msg.isUser
-                    ? "bg-green-700 text-white"
-                    : "bg-gray-200 text-gray-800"
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-100 text-gray-800"
                 }`}
               >
                 {msg.text}
               </div>
             </div>
-          ))}
-          {chatHistory.length === 0 && (
-            <div className="mt-6 p-6 border border-dashed border-gray-300 rounded text-center text-gray-500">
-              <FaDatabase className="text-4xl text-gray-400 mx-auto mb-3" />
-              <h3 className="text-lg font-semibold mb-2">No Data Available</h3>
-              <p>Select a database and run a query to display results.</p>
+          ))
+        ) : (
+          <div className="mt-10 text-center text-gray-500">
+            <FaDatabase className="text-4xl mx-auto mb-3 text-gray-300" />
+            <h3 className="text-lg font-semibold">No Data Available</h3>
+            <p>Select a database and run a query to display results.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Input area */}
+      <div className="border-t p-4 bg-white sticky bottom-0">
+        <DbSelection onDbChange={setSelectedDb} />
+        <form onSubmit={handleSubmit} className="mt-3 space-y-2">
+          <label className="text-sm font-medium text-gray-700">
+            Type your query and speak
+          </label>
+          <textarea
+            className="w-full p-2 border border-gray-300 rounded shadow-sm resize-none focus:ring-2 focus:ring-green-600 focus:outline-none"
+            rows={3}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Type your message..."
+          />
+          {error && (
+            <div className="text-red-600 text-sm flex items-center gap-1">
+              <FaDatabase />
+              {error}
             </div>
           )}
-        </div>
-
-        <div className=" p-2 m-2 rounded flex flex-col space-x-2">
-          <DbSelection onDbChange={setSelectedDb} />
-
-          <form onSubmit={handleSubmit} className="flex flex-col space-x-2">
-            <label
-              htmlFor=""
-              className="m-1 mt-2 text-sm font-medium text-gray-700"
+          <div className="flex justify-between items-center">
+            <button type="button">
+              <FaMicrophone size={24} className="text-green-600" />
+            </button>
+            <button
+              type="submit"
+              className="bg-green-600 text-white px-4 py-2 rounded shadow flex items-center gap-2"
             >
-              Type your query and Speak
-            </label>
-            <textarea
-              className={`p-2  border-green-800 rounded border-2 shadow  mb-2 resize-none bg-white outline-none text-black
-            focus:outline-none focus:ring-2 focus:ring-green-700 `}
-              name="query"
-              placeholder="Type your message..."
-              id="query"
-              rows={3}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            ></textarea>
-
-            <div className="flex justify-end">
-              <button className="">
-                <FaMicrophone size={25} color="green" className="mr-1" />
-              </button>
-              <button
-                onClick={onSend}
-                className="bg-green-700 text-white px-3 py-1 rounded shadow flex items-center space-x-2"
-              >
-                <FaPaperPlane />
-                <span>Send</span>
-              </button>
-            </div>
-          </form>
-        </div>
+              <FaPaperPlane />
+              <span>Send</span>
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

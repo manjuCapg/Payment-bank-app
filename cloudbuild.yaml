@@ -1,9 +1,9 @@
 steps:
   - name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/$gcp-alloydb/payments/payment-bank-app", "."]
+    args: ["build", "-t", "gcr.io/gcp-alloydb/payments/payment-bank-app", "."]
 
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/$gcp-alloydb/payments/payment-bank-app"]
+    args: ["push", "gcr.io/gcp-alloydb/payments/payment-bank-app"]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: "gcloud"

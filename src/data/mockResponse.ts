@@ -1,16 +1,32 @@
 const mockResponse ={
-  "chatResponse": "Fashion items are a hit in Manchester, especially among mid-income customers. Here’s what they’re buying.",
+  "chatResponse": "In London during 2025, ADL Cash Carry received the most payments with a total of $8,921.82. Following closely behind were Hollister with $8,201.19, Morrison with $6,224.60, and Tesco with $6,125.16. Next received $3,817.51 and Sainsbury received the least with $339.58.\n",
+  "sqlQuery": "SELECT\n    r.RetailerName,\n    SUM(t.PaymentAmount) AS TotalPaymentsReceived\n  FROM\n    `gcp-alloydb.curated_sample_data_payments_us.Retailers` AS r\n    INNER JOIN `gcp-alloydb.curated_sample_data_payments_us.Transactions` AS t ON r.RetailerName = t.BeneficiaryName\n  WHERE r.City LIKE '%london%'\n   AND t.PaymentDatetime BETWEEN '2025-01-01' AND '2025-12-31'\n  GROUP BY 1\nORDER BY\n  TotalPaymentsReceived DESC\n",
   "tabularData": [
-    {"ProductID": "P010", "ItemName": "Leather Jacket", "MerchantName": "StyleHub", "QuantitySold": 150, "AvgDiscount": "8%"},
-    {"ProductID": "P011", "ItemName": "Sneakers", "MerchantName": "UrbanFeet", "QuantitySold": 200, "AvgDiscount": "5%"},
-     {"ProductID": "P012", "ItemName": "Leather Jacket", "MerchantName": "StyleHub", "QuantitySold": 150, "AvgDiscount": "8%"},
-    {"ProductID": "P013", "ItemName": "Sneakers", "MerchantName": "UrbanFeet", "QuantitySold": 200, "AvgDiscount": "5%"},
-    {"ProductID": "P014", "ItemName": "Designer Handbag", "MerchantName": "ChicBoutique", "QuantitySold": 120, "AvgDiscount": "10%"},
-    {"ProductID": "P015", "ItemName": "Wool Coat", "MerchantName": "WinterWear", "QuantitySold": 100, "AvgDiscount": "12%"},
-    {"ProductID": "P016", "ItemName": "Fashion Scarf", "MerchantName": "StyleHub", "QuantitySold": 180, "AvgDiscount": "6%"},
-    {"ProductID": "P017", "ItemName": "Trendy Sunglasses", "MerchantName": "UrbanFeet", "QuantitySold": 160, "AvgDiscount": "7%"}
-  ],
-  "sqlQuery": "SELECT p.ProductID, p.ItemName, m.MerchantName, SUM(t.Quantity) AS QuantitySold, AVG(t.DiscountApplied) AS AvgDiscount FROM Transactions t JOIN CustomerDetails c ON t.CustomerID = c.CustomerID JOIN ProductDetails p ON t.ProductID = p.ProductID JOIN MerchantDetails m ON t.MerchantID = m.MerchantID WHERE c.Location = 'Manchester' AND c.IncomeBracket = 'Medium' AND p.Category = 'Fashion' GROUP BY p.ProductID, p.ItemName, m.MerchantName ORDER BY QuantitySold DESC;"
+    {
+      "RetailerName": "ADL Cash carry",
+      "TotalPaymentsReceived": 8921.82
+    },
+    {
+      "RetailerName": "Hollister",
+      "TotalPaymentsReceived": 8201.19
+    },
+    {
+      "RetailerName": "Morrison",
+      "TotalPaymentsReceived": 6224.5999999999985
+    },
+    {
+      "RetailerName": "Tesco",
+      "TotalPaymentsReceived": 6125.16
+    },
+    {
+      "RetailerName": "Next",
+      "TotalPaymentsReceived": 3817.51
+    },
+    {
+      "RetailerName": "Sainsbury",
+      "TotalPaymentsReceived": 339.58
+    }
+  ]
 }
 
 export default mockResponse;

@@ -30,7 +30,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 ">
+    <div className="flex flex-col h-screen bg-gray-100 ">
       <Header
         onToggleSidebar={() => {
           console.log("Toggle Sidebar", sidebarOpen);
@@ -38,7 +38,7 @@ function App() {
         }}
       />
 
-      <div className="flex">
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <div
           className={`transition-all duration-300 ease-in-out ${
@@ -53,8 +53,14 @@ function App() {
           />
         </div>
         {/* Main Content */}
-        <div className="flex-1 p-4 space-y-8 ">
-          <Instructions />
+        <div className="flex-1 overflow-y-auto p-4 space-y-8">
+          <Instructions
+            onNewChat={() => {
+              setQuery("");
+              setChatHistory([]);
+              setResponseData(null);
+            }}
+          />
           <QueryBox sqlQuery={responseData?.sqlQuery} />
           <DataTable data={responseData?.tabularData} />
         </div>

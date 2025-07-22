@@ -26,7 +26,7 @@ const Sidebar = ({ query, setQuery, onSend, chatHistory }) => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)]  bg-white shadow">
+    <div className="flex flex-col h-full overflow-y-auto bg-white shadow">
       {/* Chat messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {chatHistory?.length > 0 ? (

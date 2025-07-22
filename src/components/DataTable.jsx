@@ -12,7 +12,7 @@ export const DataTable = ({ data }) => {
     );
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-xl max-w-full h-[calc(100vh-16rem)] overflow-auto">
+    <div className="bg-white p-4 rounded-lg shadow-xl w-full">
       <h2 className="text-xl font-semibold mb-4">Data Table</h2>
 
       <div className="overflow-x-auto">
@@ -21,26 +21,32 @@ export const DataTable = ({ data }) => {
             <tr>
               {Object.keys(data[0]).map((key) => (
                 <th
-                  className="p-2 text-left border-b border-gray-300"
                   key={key}
+                  className="p-2 text-left border-b border-gray-300 bg-gray-100"
                 >
                   {key}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>
-            {data.map((row, idx) => (
-              <tr key={idx} className="hover:bg-gray-50">
-                {Object.values(row).map((val, i) => (
-                  <td className="p-2 border-b border-gray-200" key={i}>
-                    {val}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
         </table>
+
+        {/* Scrollable tbody */}
+        <div className="max-h-[400px] overflow-y-auto">
+          <table className="min-w-full table-auto border border-t-0 border-gray-200">
+            <tbody>
+              {data.map((row, idx) => (
+                <tr key={idx} className="hover:bg-gray-50">
+                  {Object.values(row).map((val, i) => (
+                    <td className="p-2 border-b border-gray-200" key={i}>
+                      {val}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

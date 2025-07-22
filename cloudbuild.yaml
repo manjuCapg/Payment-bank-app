@@ -15,11 +15,10 @@ steps:
         "--image",
         "gcr.io/gcp-alloydb/payments/payment-bank-app",
         "--region",
-        "europe-west2-london",
+        "europe-west2",
         "--platform",
         "managed",
         "--allow-unauthenticated",
-        
       ]
 
 images:

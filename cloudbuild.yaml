@@ -1,9 +1,9 @@
 steps:
   - name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/$gcp-alloydb/payments/payment-bank-app", "."]
+    args: ["build", "-t", "gcr.io/gcp-alloydb/payments/payment-bank-app", "."]
 
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/$gcp-alloydb/payments/payment-bank-app"]
+    args: ["push", "gcr.io/gcp-alloydb/payments/payment-bank-app"]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: "gcloud"
@@ -13,7 +13,7 @@ steps:
         "deploy",
         "payment-bank-app",
         "--image",
-        "gcr.io/$gcp-alloydb/payments/payment-bank-app",
+        "gcr.io/gcp-alloydb/payments/payment-bank-app",
         "--region",
         "europe-west2-london",
         "--platform",
@@ -22,7 +22,7 @@ steps:
       ]
 
 images:
-  - "gcr.io/$gcp-alloydb/payments/payment-bank-app"
+  - "gcr.io/gcp-alloydb/payments/payment-bank-app"
 
 options:
   logging: CLOUD_LOGGING_ONLY

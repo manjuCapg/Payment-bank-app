@@ -1,0 +1,25 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "gcr.io/$gcp-alloydb/payments/payment-bank-app", "."]
+
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/$gcp-alloydb/payments/payment-bank-app"]
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args:
+      [
+        "run",
+        "deploy",
+        "payment-bank-app",
+        "--image",
+        "gcr.io/$gcp-alloydb/payments/payment-bank-app",
+        "--region",
+        "us-central1",
+        "--platform",
+        "managed",
+        "--allow-unauthenticated",
+      ]
+
+images:
+  - "gcr.io/$gcp-alloydb/payments/payment-bank-app"

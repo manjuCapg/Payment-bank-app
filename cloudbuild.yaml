@@ -19,6 +19,7 @@ steps:
         "--platform",
         "managed",
         "--allow-unauthenticated",
+        
       ]
 
 images:

@@ -5,7 +5,7 @@ import Sidebar from "./components/Sidebar";
 import { QueryBox } from "./components/QueryBox";
 import { DataTable } from "./components/DataTable";
 import { useState } from "react";
-import mockResponse from "./data/mockResponse";
+import { processQuery } from "./services/apiService";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -13,20 +13,26 @@ function App() {
   const [responseData, setResponseData] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true); // NEW
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!query.trim()) return;
 
     const updatedHistory = [...chatHistory, { text: query, isUser: true }];
     setChatHistory(updatedHistory);
     setQuery("");
 
-    setTimeout(() => {
+    try {
+      const apiResponse = await processQuery(query);
       setChatHistory((prev) => [
         ...prev,
-        { text: mockResponse.chatResponse, isUser: false },
+        { text: apiResponse.response, isUser: false },
       ]);
-      setResponseData(mockResponse);
-    }, 500);
+    } catch (error) {
+      setChatHistory((prev) => [
+        ...prev,
+        { text: "Error processing query", isUser: false },
+      ]);
+      console.error("Error processing query:", error);
+    }
   };
 
   return (

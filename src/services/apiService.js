@@ -10,9 +10,9 @@ const api = axios.create({
   },
 });
 
-export const processQuery = async (query) => {
+export const processQuery = async (question) => {
   try {
-    const response = await api.post("/process-query", { query });
+    const response = await api.post("/process_query", { question });
     return response.data;
   } catch (error) {
     console.error("Error processing query:", error);

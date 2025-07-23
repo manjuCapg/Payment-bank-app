@@ -24,8 +24,9 @@ function App() {
       const apiResponse = await processQuery(query);
       setChatHistory((prev) => [
         ...prev,
-        { text: apiResponse.response, isUser: false },
+        { text: apiResponse.chatResponse, isUser: false },
       ]);
+      setResponseData(apiResponse);
     } catch (error) {
       setChatHistory((prev) => [
         ...prev,

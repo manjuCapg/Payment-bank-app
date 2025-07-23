@@ -1,10 +1,12 @@
 import axios from "axios";
 
-// const baseURL =
-//   "https://genaipayment-backend-719673130781.europe-west1.run.app";
+const baseApi =
+  import.meta.env.MODE === "development"
+    ? "/api"
+    : "https://genaipayment-backend-719673130781.europe-west1.run.app/proxy/8000";
 
 const api = axios.create({
-  baseURL: "/api", // Use the proxy defined in vite.config.js
+  baseURL: baseApi, // Use the proxy defined in vite.config.js
   headers: {
     "Content-type": "application/json",
   },

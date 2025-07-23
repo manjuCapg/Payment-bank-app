@@ -18,9 +18,7 @@ steps:
         "europe-west2",
         "--platform",
         "managed",
-        "--no-allow-unauthenticated",
-
- 
+        "--allow-unauthenticated",
       ]
 
 images:

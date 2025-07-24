@@ -11,7 +11,8 @@ function App() {
   const [query, setQuery] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [responseData, setResponseData] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true); // NEW
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSend = async () => {
     if (!query.trim()) return;
@@ -19,6 +20,7 @@ function App() {
     const updatedHistory = [...chatHistory, { text: query, isUser: true }];
     setChatHistory(updatedHistory);
     setQuery("");
+    setIsLoading(true); // Start loading
 
     try {
       const apiResponse = await processQuery(query);
@@ -33,6 +35,8 @@ function App() {
         { text: "Error processing query", isUser: false },
       ]);
       console.error("Error processing query:", error);
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
 
@@ -49,7 +53,7 @@ function App() {
         {/* Sidebar */}
         <div
           className={`transition-all duration-300 ease-in-out ${
-            sidebarOpen ? "w-80" : "w-0"
+            sidebarOpen ? "w-full sm:w-80 md:w-70 lg:w-80 " : "w-0"
           } overflow-hidden`}
         >
           <Sidebar
@@ -57,6 +61,7 @@ function App() {
             onSend={handleSend}
             setQuery={setQuery}
             chatHistory={chatHistory}
+            isLoading={isLoading}
           />
         </div>
         {/* Main Content */}

@@ -1,8 +1,14 @@
-import { FaMicrophone, FaPaperPlane, FaDatabase } from "react-icons/fa";
+import {
+  FaMicrophone,
+  FaPaperPlane,
+  FaDatabase,
+  FaSpinner,
+} from "react-icons/fa";
 import DbSelection from "./DbSelection";
 import React, { useState } from "react";
+import { LoadingMessage } from "./LoadingMessage";
 
-const Sidebar = ({ query, setQuery, onSend, chatHistory }) => {
+const Sidebar = ({ query, setQuery, onSend, chatHistory, isLoading }) => {
   const [selectedDb, setSelectedDb] = useState("Selected Database");
   const [error, setError] = useState("");
 
@@ -53,15 +59,24 @@ const Sidebar = ({ query, setQuery, onSend, chatHistory }) => {
             <p>Select a database and run a query to display results.</p>
           </div>
         )}
+
+        {/* Loading Spinner */}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="px-4 py-2 rounded-lg max-w-md shadow bg-gray-100 text-gray-800">
+              <LoadingMessage />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Input area */}
       <div className="border-t p-4 bg-white sticky bottom-0">
         <DbSelection onDbChange={setSelectedDb} />
         <form onSubmit={handleSubmit} className="mt-3 space-y-2">
-          <label className="text-sm font-medium text-gray-700">
+          <div className="text-sm font-medium text-gray-700 m-1">
             Type your query and speak
-          </label>
+          </div>
           <textarea
             className="w-full p-2 border border-gray-300 rounded shadow-sm resize-none focus:ring-2 focus:ring-green-600 focus:outline-none"
             rows={3}

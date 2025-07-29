@@ -8,8 +8,15 @@ import DbSelection from "./DbSelection";
 import React, { useState } from "react";
 import { LoadingMessage } from "./LoadingMessage";
 
-const Sidebar = ({ query, setQuery, onSend, chatHistory, isLoading }) => {
-  const [selectedDb, setSelectedDb] = useState("Selected Database");
+const Sidebar = ({
+  query,
+  setQuery,
+  onSend,
+  chatHistory,
+  isLoading,
+  selectedDb,
+  setSelectedDb,
+}) => {
   const [error, setError] = useState("");
 
   const isDbvalid = selectedDb === "Big Query DB" || selectedDb === "Mongo DB";

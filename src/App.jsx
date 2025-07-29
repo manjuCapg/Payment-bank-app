@@ -13,9 +13,15 @@ function App() {
   const [responseData, setResponseData] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedDb, setSelectedDb] = useState("Selected Database");
 
   const handleSend = async () => {
     if (!query.trim()) return;
+
+    if (selectedDb !== "Big Query DB") {
+      alert("Please select 'Big Query DB' to send the query.");
+      return;
+    }
 
     const updatedHistory = [...chatHistory, { text: query, isUser: true }];
     setChatHistory(updatedHistory);
@@ -62,6 +68,8 @@ function App() {
             setQuery={setQuery}
             chatHistory={chatHistory}
             isLoading={isLoading}
+            selectedDb={selectedDb}
+            setSelectedDb={setSelectedDb}
           />
         </div>
         {/* Main Content */}

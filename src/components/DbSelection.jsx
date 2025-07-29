@@ -1,16 +1,29 @@
 import { FaChevronDown } from "react-icons/fa";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const DbSelection = ({ onDbChange }) => {
   const options = ["Selected Database", "Big Query DB", "Mongo DB"];
   const [selected, setSelected] = useState(options[0]);
   const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
   useEffect(() => {
     onDbChange(selected);
   }, [selected, onDbChange]); // Call onDbChange when selected changes
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+        console.log("Clicked outside the dropdown");
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   return (
-    <div className="relative text-left w-68">
+    <div ref={dropdownRef} className="relative text-left w-68">
       {" "}
       {/* Set a fixed width */} {/* Set a fixed width */}
       <div className="m-1 text-sm font-medium text-gray-700">

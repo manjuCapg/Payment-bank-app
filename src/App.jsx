@@ -49,17 +49,15 @@ function App() {
   return (
     <div className="flex flex-col h-screen bg-gray-100 ">
       <Header
-        onToggleSidebar={() => {
-          console.log("Toggle Sidebar", sidebarOpen);
-          setSidebarOpen(!sidebarOpen);
-        }}
+        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        sidebarOpen={sidebarOpen}
       />
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <div
           className={`transition-all duration-300 ease-in-out ${
-            sidebarOpen ? "w-full sm:w-80 md:w-70 lg:w-80 " : "w-0"
+            sidebarOpen ? "w-80" : "w-0"
           } overflow-hidden`}
         >
           <Sidebar

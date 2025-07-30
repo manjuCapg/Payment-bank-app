@@ -30,14 +30,14 @@ export const Header = ({ onToggleSidebar, sidebarOpen }) => {
           <span className="ml-2 text-lg">{sidebarOpen ? "Menu" : "Menu"}</span>
         </button>
 
-        <h1 className="text-xl font-semibold text-white">DATA BANK</h1>
+        <h1 className="text-xl font-semibold text-white">PAYMENT BANK</h1>
       </div>
 
       {/* Right: User Info */}
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2 text-white">
           <FaUserCircle className="text-xl" />
-          <span className="text-sm">Austyn Bambrook</span>
+          <span className="text-sm">John Doe</span>
         </div>
         <button className="flex items-center px-3 py-1 rounded text-white hover:bg-gray-700">
           <BiLogOut className="mr-1" />

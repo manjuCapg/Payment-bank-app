@@ -18,12 +18,17 @@ const Sidebar = ({
   setSelectedDb,
 }) => {
   const [error, setError] = useState("");
+  const [isListening, setIsListening] = useState(false);
+  const [language, setLanguage] = useState("en-US");
 
   const isDbvalid = selectedDb === "Big Query DB" || selectedDb === "Mongo DB";
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!query.trim()) {
+  const handleSubmit = (e, customQuery = null) => {
+    if (e && e.preventDefault) e.preventDefault();
+
+    const finalQuery = customQuery ?? query;
+
+    if (!finalQuery.trim()) {
       setError("Query cannot be empty");
       return;
     }
@@ -35,7 +40,41 @@ const Sidebar = ({
       setError("");
     }
 
-    onSend(); // Trigger the send function
+    setQuery(finalQuery); // Ensure query state is updated
+    onSend();
+  };
+
+  const handleMicClick = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      setError("Speech recognition is not supported in this browser.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = language;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    setIsListening(true);
+    recognition.start();
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setIsListening(false);
+      handleSubmit(null, transcript); // Pass transcript directly
+    };
+
+    recognition.onerror = (event) => {
+      setError(`Speech recognition error: ${event.error}`);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
   };
 
   return (
@@ -80,6 +119,20 @@ const Sidebar = ({
       {/* Input area */}
       <div className="border-t p-4 bg-white sticky bottom-0">
         <DbSelection onDbChange={setSelectedDb} />
+
+        {/* Language Selector */}
+        {/* <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          className="border p-1 rounded text-sm mb-2"
+        >
+          <option value="en-US">English (US)</option>
+          <option value="en-GB">English (UK)</option>
+          <option value="hi-IN">Hindi</option>
+          <option value="fr-FR">French</option>
+          <option value="es-ES">Spanish</option>
+        </select> */}
+
         <form onSubmit={handleSubmit} className="mt-3 space-y-2">
           <div className="text-sm font-medium text-gray-700 m-1">
             Type your query and speak
@@ -98,8 +151,16 @@ const Sidebar = ({
             </div>
           )}
           <div className="flex justify-between items-center">
-            <button type="button">
-              <FaMicrophone size={24} className="text-green-600" />
+            <button
+              type="button"
+              onClick={handleMicClick}
+              disabled={isListening}
+            >
+              {isListening ? (
+                <FaSpinner className="animate-spin text-green-600" size={24} />
+              ) : (
+                <FaMicrophone size={24} className="text-green-600" />
+              )}
             </button>
             <button
               type="submit"

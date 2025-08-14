@@ -46,6 +46,22 @@ export const DataTable = ({ data }) => {
           </tbody>
         </table>
       </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-end mt-4 space-x-3">
+        <button
+          onClick={() => console.log("Export clicked")}
+          className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-grey-700 transition"
+        >
+          Export
+        </button>
+        <button
+          onClick={() => console.log("Save clicked")}
+          className="bg-green-800 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+        >
+          Save
+        </button>
+      </div>
     </div>
   );
 };

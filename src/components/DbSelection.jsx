@@ -23,7 +23,7 @@ const DbSelection = ({ onDbChange }) => {
     };
   }, []);
   return (
-    <div ref={dropdownRef} className="relative text-left w-68">
+    <div ref={dropdownRef} className="relative text-left w-110">
       {" "}
       {/* Set a fixed width */} {/* Set a fixed width */}
       <div className="m-1 text-sm font-medium text-gray-700">

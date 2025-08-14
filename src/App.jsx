@@ -6,6 +6,8 @@ import { QueryBox } from "./components/QueryBox";
 import { DataTable } from "./components/DataTable";
 import { useState } from "react";
 import { processQuery } from "./services/apiService";
+import { ChartDisplay } from "./components/ChartDisplay";
+import LookerEmbed from "./components/LookerEmbed";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -51,14 +53,16 @@ function App() {
       <Header
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
         sidebarOpen={sidebarOpen}
+        data-cy="header"
       />
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <div
           className={`transition-all duration-300 ease-in-out ${
-            sidebarOpen ? "w-80" : "w-0"
+            sidebarOpen ? "w-120" : "w-0"
           } overflow-hidden`}
+          data-cy="sidebar"
         >
           <Sidebar
             query={query}
@@ -68,6 +72,7 @@ function App() {
             isLoading={isLoading}
             selectedDb={selectedDb}
             setSelectedDb={setSelectedDb}
+            data-cy="sidebar-component"
           />
         </div>
         {/* Main Content */}
@@ -80,6 +85,7 @@ function App() {
             }}
           />
           <QueryBox sqlQuery={responseData?.sqlQuery} />
+          {/* <ChartDisplay data={responseData?.tabularData} /> */}
           <DataTable data={responseData?.tabularData} />
         </div>
       </div>

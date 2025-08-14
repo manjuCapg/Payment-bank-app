@@ -40,7 +40,7 @@ const Sidebar = ({
       setError("");
     }
 
-    setQuery(finalQuery); // Ensure query state is updated
+    setQuery(finalQuery);
     onSend();
   };
 
@@ -64,7 +64,7 @@ const Sidebar = ({
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
       setIsListening(false);
-      handleSubmit(null, transcript); // Pass transcript directly
+      handleSubmit(null, transcript);
     };
 
     recognition.onerror = (event) => {
@@ -75,6 +75,37 @@ const Sidebar = ({
     recognition.onend = () => {
       setIsListening(false);
     };
+  };
+
+  // Extract main answer before either "Follow-up Questions:" or "Further Analysis Questions:"
+  const getMainAnswer = (text) => {
+    const followUpIndex = text.indexOf("Follow-up Questions:");
+    const analysisIndex = text.indexOf("Further Analysis Questions:");
+    const splitIndex =
+      followUpIndex !== -1
+        ? followUpIndex
+        : analysisIndex !== -1
+        ? analysisIndex
+        : -1;
+    return splitIndex !== -1 ? text.slice(0, splitIndex).trim() : text;
+  };
+
+  // Extract follow-up questions from bolded text
+  const extractFollowUpQuestions = (text) => {
+    const matches = [...text.matchAll(/\*\*(.*?)\*\*/g)];
+    return matches.map((match) => match[1]);
+  };
+
+  // Only get follow-up questions from the latest Copilot message
+  const lastCopilotMessage = [...chatHistory]
+    .reverse()
+    .find((msg) => !msg.isUser);
+  const followUpQuestions = lastCopilotMessage
+    ? extractFollowUpQuestions(lastCopilotMessage.text)
+    : [];
+
+  const handleFollowUpClick = (question) => {
+    setQuery(question);
   };
 
   return (
@@ -94,7 +125,7 @@ const Sidebar = ({
                     : "bg-gray-100 text-gray-800"
                 }`}
               >
-                {msg.text}
+                {msg.isUser ? msg.text : getMainAnswer(msg.text)}
               </div>
             </div>
           ))
@@ -116,22 +147,24 @@ const Sidebar = ({
         )}
       </div>
 
+      {/* Follow-up Questions (styled like Copilot) */}
+      {followUpQuestions.length > 0 && (
+        <div className="px-4 py-3 border-b flex flex-wrap gap-2 ">
+          {followUpQuestions.map((q, idx) => (
+            <button
+              key={idx}
+              onClick={() => handleFollowUpClick(q)}
+              className="bg-white border border-green-600 text-green-700 px-3 py-1 rounded-full text-sm hover:bg-green-50 hover:border-green-700 transition duration-150 ease-in-out focus:outline-none"
+            >
+              {q}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Input area */}
       <div className="border-t p-4 bg-white sticky bottom-0">
         <DbSelection onDbChange={setSelectedDb} />
-
-        {/* Language Selector */}
-        {/* <select
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-          className="border p-1 rounded text-sm mb-2"
-        >
-          <option value="en-US">English (US)</option>
-          <option value="en-GB">English (UK)</option>
-          <option value="hi-IN">Hindi</option>
-          <option value="fr-FR">French</option>
-          <option value="es-ES">Spanish</option>
-        </select> */}
 
         <form onSubmit={handleSubmit} className="mt-3 space-y-2">
           <div className="text-sm font-medium text-gray-700 m-1">

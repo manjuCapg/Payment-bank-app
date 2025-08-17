@@ -5,7 +5,7 @@ import {
   FaSpinner,
 } from "react-icons/fa";
 import DbSelection from "./DbSelection";
-import React, { useState } from "react";
+import React, { useState, useRef, useLayoutEffect } from "react";
 import { LoadingMessage } from "./LoadingMessage";
 
 const Sidebar = ({
@@ -20,6 +20,14 @@ const Sidebar = ({
   const [error, setError] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [language, setLanguage] = useState("en-US");
+  const scrollContainerRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const el = scrollContainerRef.current;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [chatHistory, isLoading]);
 
   const isDbvalid = selectedDb === "Big Query DB" || selectedDb === "Mongo DB";
 
@@ -111,7 +119,10 @@ const Sidebar = ({
   return (
     <div className="flex flex-col h-full overflow-y-auto bg-white shadow">
       {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto p-4 space-y-3"
+      >
         {chatHistory?.length > 0 ? (
           chatHistory.map((msg, index) => (
             <div

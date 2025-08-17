@@ -14,32 +14,13 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ""),
-        // configure: (proxy, _options) => {
-        //   proxy.on("error", (err, _req, _res) => {
-        //     console.log("proxy error", err);
-        //   });
-        //   proxy.on("proxyReq", (proxyReq, req, _res) => {
-        //     console.log(
-        //       "Sending Request:",
-        //       req.method,
-        //       req.url,
-        //       " => TO THE TARGET =>  ",
-        //       proxyReq.method,
-        //       proxyReq.protocol,
-        //       proxyReq.host,
-        //       proxyReq.path,
-        //       JSON.stringify(proxyReq.getHeaders())
-        //     );
-        //   });
-        //   proxy.on("proxyRes", (proxyRes, req, _res) => {
-        //     console.log(
-        //       "Received Response from the Target:",
-        //       proxyRes.statusCode,
-        //       req.url,
-        //       JSON.stringify(proxyRes.headers)
-        //     );
-        //   });
-        // },
+      },
+      "/mongoapi": {
+        target:
+          "https://15673827115c716f-dot-europe-west2.notebooks.googleusercontent.com/proxy/8000/docs",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/mongoapi/, ""),
       },
     },
   },

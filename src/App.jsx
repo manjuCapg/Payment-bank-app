@@ -17,24 +17,39 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDb, setSelectedDb] = useState("Selected Database");
 
+  const isChartable = (data) => {
+    if (!Array.isArray(data) || data.length === 0) return false;
+
+    const sample = data[0];
+    const hasNumeric = Object.values(sample).some(
+      (val) => typeof val === "number"
+    );
+    const hasLabel = Object.values(sample).some(
+      (val) => typeof val === "string"
+    );
+
+    return hasNumeric && hasLabel;
+  };
+
   const handleSend = async () => {
     if (!query.trim()) return;
-
-    if (selectedDb !== "Big Query DB") {
-      alert("Please select 'Big Query DB' to send the query.");
-      return;
-    }
 
     const updatedHistory = [...chatHistory, { text: query, isUser: true }];
     setChatHistory(updatedHistory);
     setQuery("");
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
 
     try {
-      const apiResponse = await processQuery(query);
+      if (selectedDb === "Selected Database") {
+        alert("Please select a valid database to send the query.");
+        return;
+      }
+
+      const apiResponse = await processQuery(query, selectedDb);
+
       setChatHistory((prev) => [
         ...prev,
-        { text: apiResponse.chatResponse, isUser: false },
+        { text: apiResponse.chatResponse || "Query processed", isUser: false },
       ]);
       setResponseData(apiResponse);
     } catch (error) {
@@ -44,7 +59,7 @@ function App() {
       ]);
       console.error("Error processing query:", error);
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsLoading(false);
     }
   };
 
@@ -85,7 +100,16 @@ function App() {
             }}
           />
           <QueryBox sqlQuery={responseData?.sqlQuery} />
-          {/* <ChartDisplay data={responseData?.tabularData} /> */}
+          {isChartable(responseData?.tabularData) && (
+            <ChartDisplay data={responseData.tabularData} />
+          )}
+          {!isChartable(responseData?.tabularData) &&
+            responseData?.tabularData && (
+              <p className="text-gray-500">
+                This data is not suitable for chart display.
+              </p>
+            )}
+
           <DataTable data={responseData?.tabularData} />
         </div>
       </div>

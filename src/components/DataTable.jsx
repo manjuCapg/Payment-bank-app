@@ -2,6 +2,27 @@ import React from "react";
 import { FaDatabase } from "react-icons/fa";
 
 export const DataTable = ({ data }) => {
+  const formatHeader = (key) => {
+    // Replace underscores with spaces
+    let formatted = key.replace(/_/g, " ");
+    // Insert space before capital letters (for camelCase)
+    formatted = formatted.replace(/([a-z])([A-Z])/g, "$1 $2");
+    // Capitalize first letter of each word
+    return formatted
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  const formatValue = (key, value) => {
+    // Check if the key suggests it's an amount
+    const isAmount = /amount|price|total|cost|payment/i.test(key);
+    if (isAmount && !isNaN(value)) {
+      return `£${parseFloat(value).toFixed(2)}`;
+    }
+    return value !== null ? value.toString() : "—";
+  };
+
   if (!data || data.length === 0)
     return (
       <div className="mt-6 p-6 border border-dashed border-gray-300 rounded text-center text-gray-500">
@@ -25,7 +46,7 @@ export const DataTable = ({ data }) => {
                   key={key}
                   className="p-2 text-left border-b border-gray-300 whitespace-nowrap bg-gray-100"
                 >
-                  {key}
+                  {formatHeader(key)}
                 </th>
               ))}
             </tr>
@@ -33,12 +54,12 @@ export const DataTable = ({ data }) => {
           <tbody>
             {data.map((row, idx) => (
               <tr key={idx} className="hover:bg-gray-50">
-                {Object.values(row).map((val, i) => (
+                {Object.entries(row).map(([key, val], i) => (
                   <td
                     key={i}
                     className="p-2 border-b border-gray-200 whitespace-nowrap"
                   >
-                    {val !== null ? val.toString() : "—"}
+                    {formatValue(key, val)}
                   </td>
                 ))}
               </tr>

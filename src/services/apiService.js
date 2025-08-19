@@ -9,7 +9,7 @@ const bigQueryBase =
 const mongoBase =
   import.meta.env.MODE === "development"
     ? "/mongoapi"
-    : "https://genaipayment-backend-719673130781.europe-west1.run.app/proxy/8000";
+    : "https://15673827115c716f-dot-europe-west2.notebooks.googleusercontent.com/proxy/8000/docs";
 
 // Axios instances
 const bigQueryApi = axios.create({

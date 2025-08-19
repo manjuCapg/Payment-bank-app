@@ -1,6 +1,5 @@
 import React from "react";
 import { FaDatabase } from "react-icons/fa";
-
 import toast from "react-hot-toast";
 
 export const DataTable = ({ data, onToggleChart }) => {
@@ -50,17 +49,18 @@ export const DataTable = ({ data, onToggleChart }) => {
     );
 
   return (
-    <div className="bg-white p-4 mt-6 rounded-lg shadow-xl w-full">
+    <div className="bg-white p-4 mt-6 rounded-lg shadow-xl w-full relative">
       <h2 className="text-xl font-semibold mb-4">Data Table</h2>
 
-      <div className="overflow-auto max-h-[70vh]">
-        <table className="min-w-full table-auto border border-gray-200">
-          <thead className="bg-gray-100 sticky top-0 z-10">
+      {/* Scrollable Table */}
+      <div className="overflow-x-auto max-h-[70vh] overflow-y-auto  rounded">
+        <table className="min-w-full table-auto border-collapse">
+          <thead className="sticky top-0 bg-gray-100 z-10">
             <tr>
               {Object.keys(data[0]).map((key) => (
                 <th
                   key={key}
-                  className="p-2 text-left border-b border-gray-300 whitespace-nowrap bg-gray-100"
+                  className="p-2 text-left border-b border-gray-300 whitespace-nowrap"
                 >
                   {formatHeader(key)}
                 </th>
@@ -84,24 +84,24 @@ export const DataTable = ({ data, onToggleChart }) => {
         </table>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex justify-end mt-4 space-x-3">
+      {/* Sticky Action Buttons - Responsive */}
+      <div className="sticky bottom-0 bg-white py-4 px-4 shadow-md flex flex-col sm:flex-row sm:justify-end sm:space-x-3 space-y-2 sm:space-y-0 z-20">
         <button
           onClick={handleExport}
-          className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow cursor-pointer"
+          className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow cursor-pointer w-full sm:w-auto"
         >
           Export
         </button>
         <button
           onClick={() => console.log("Save clicked")}
-          className="border border-green-700 text-green-700 hover:bg-green-600 hover:text-white font-semibold py-2 px-4 rounded shadow cursor-pointer"
+          className="border border-green-700 text-green-700 hover:bg-green-600 hover:text-white font-semibold py-2 px-4 rounded shadow cursor-pointer w-full sm:w-auto"
         >
           Save
         </button>
         {onToggleChart && (
           <button
             onClick={onToggleChart}
-            className="bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold py-2 px-4 rounded shadow cursor-pointer"
+            className="bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold py-2 px-4 rounded shadow cursor-pointer w-full sm:w-auto"
           >
             Toggle Chart View
           </button>

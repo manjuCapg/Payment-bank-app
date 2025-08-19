@@ -1,5 +1,6 @@
 import React from "react";
 import { FaDatabase } from "react-icons/fa";
+
 import toast from "react-hot-toast";
 
 export const DataTable = ({ data, onToggleChart }) => {
@@ -32,8 +33,9 @@ export const DataTable = ({ data, onToggleChart }) => {
   };
 
   const formatValue = (key, value) => {
-    const isAmount = /amount|price|total|cost|payment/i.test(key);
-    if (isAmount && !isNaN(value)) {
+    console.log("Formatting value for key:", key, "value:", value);
+    const poundFields = ["PaymentAmount", "TaxAmount", "Interchange"];
+    if (poundFields.includes(key) && !isNaN(value)) {
       return `£${parseFloat(value).toFixed(2)}`;
     }
     return value !== null ? value.toString() : "—";
@@ -49,11 +51,17 @@ export const DataTable = ({ data, onToggleChart }) => {
     );
 
   return (
-    <div className="bg-white p-4 mt-6 rounded-lg shadow-xl w-full relative">
+    <div
+      className="bg-white p-4 mt-6 rounded-lg shadow-xl w-full flex flex-col"
+      style={{ maxHeight: "calc(100vh - 240px)" }}
+    >
       <h2 className="text-xl font-semibold mb-4">Data Table</h2>
 
       {/* Scrollable Table */}
-      <div className="overflow-x-auto max-h-[70vh] overflow-y-auto  rounded">
+      <div
+        className="overflow-auto grow rounded"
+        style={{ maxHeight: "500px" }}
+      >
         <table className="min-w-full table-auto border-collapse">
           <thead className="sticky top-0 bg-gray-100 z-10">
             <tr>
@@ -84,8 +92,8 @@ export const DataTable = ({ data, onToggleChart }) => {
         </table>
       </div>
 
-      {/* Sticky Action Buttons - Responsive */}
-      <div className="sticky bottom-0 bg-white py-4 px-4 shadow-md flex flex-col sm:flex-row sm:justify-end sm:space-x-3 space-y-2 sm:space-y-0 z-20">
+      {/* Buttons */}
+      <div className="mt-4 py-4 px-4 bg-white flex flex-col sm:flex-row sm:justify-end sm:space-x-3 space-y-2 sm:space-y-0">
         <button
           onClick={handleExport}
           className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow cursor-pointer w-full sm:w-auto"

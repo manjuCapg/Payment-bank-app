@@ -19,7 +19,7 @@ export const QueryBox = ({ sqlQuery }) => {
 
   return (
     <>
-      <h2 className="text-lg">Query Script</h2>
+      <h2 className="text-lg mb-2">Query Script</h2>
       <div className="flex justify-between items-center mb-2">
         <input
           type="text"

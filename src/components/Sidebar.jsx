@@ -5,8 +5,9 @@ import {
   FaSpinner,
 } from "react-icons/fa";
 import DbSelection from "./DbSelection";
-import React, { useState, useRef, useLayoutEffect } from "react";
+import React, { useState, useRef, useLayoutEffect, useEffect } from "react";
 import { LoadingMessage } from "./LoadingMessage";
+import { useSuggestions } from "../hooks/useSuggestions";
 
 const Sidebar = ({
   query,
@@ -21,6 +22,7 @@ const Sidebar = ({
   const [isListening, setIsListening] = useState(false);
   const [language, setLanguage] = useState("en-US");
   const scrollContainerRef = useRef(null);
+  const { prediction } = useSuggestions(query);
 
   useLayoutEffect(() => {
     const el = scrollContainerRef.current;
@@ -181,13 +183,40 @@ const Sidebar = ({
           <div className="text-sm font-medium text-gray-700 m-1">
             Type your query and speak
           </div>
-          <textarea
-            className="w-full p-2 border border-gray-300 rounded shadow-sm resize-none focus:ring-2 focus:ring-green-600 focus:outline-none"
-            rows={3}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Type your message..."
-          />
+          <div className="relative">
+            <textarea
+              className="w-full p-2 border border-gray-300 rounded shadow-sm resize-none focus:ring-2 focus:ring-green-600 focus:outline-none font-mono"
+              rows={3}
+              value={query}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  if (prediction) {
+                    setQuery(prediction);
+                  } else {
+                    handleSubmit(e);
+                  }
+                } else if (
+                  (e.key === "Tab" || e.key === "ArrowRight") &&
+                  prediction
+                ) {
+                  e.preventDefault();
+                  setQuery(prediction);
+                }
+              }}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Type your message..."
+            />
+            {prediction && (
+              <div className="absolute top-2 left-2 pointer-events-none text-gray-400 font-mono whitespace-pre-wrap">
+                <span className="invisible">{query}</span>
+                <span className="opacity-70">
+                  {prediction.slice(query.length)}
+                </span>
+              </div>
+            )}
+          </div>
+
           {error && (
             <div className="text-red-600 text-sm flex items-center gap-1">
               <FaDatabase />
@@ -199,6 +228,7 @@ const Sidebar = ({
               type="button"
               onClick={handleMicClick}
               disabled={isListening}
+              className="cursor-pointer"
             >
               {isListening ? (
                 <FaSpinner className="animate-spin text-green-600" size={24} />
@@ -208,7 +238,7 @@ const Sidebar = ({
             </button>
             <button
               type="submit"
-              className="bg-green-600 text-white px-4 py-2 rounded shadow flex items-center gap-2"
+              className="bg-green-600 text-white px-4 py-2 rounded shadow flex items-center gap-2 cursor-pointer"
             >
               <FaPaperPlane />
               <span>Send</span>

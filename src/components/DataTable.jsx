@@ -1,13 +1,31 @@
 import React from "react";
 import { FaDatabase } from "react-icons/fa";
 
-export const DataTable = ({ data }) => {
+import toast from "react-hot-toast";
+
+export const DataTable = ({ data, onToggleChart }) => {
+  const handleExport = () => {
+    try {
+      const jsonData = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonData], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "transaction_data.json";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("Data successfully downloaded!");
+    } catch (error) {
+      toast.error("Failed to export data.", error);
+    }
+  };
+
   const formatHeader = (key) => {
-    // Replace underscores with spaces
     let formatted = key.replace(/_/g, " ");
-    // Insert space before capital letters (for camelCase)
     formatted = formatted.replace(/([a-z])([A-Z])/g, "$1 $2");
-    // Capitalize first letter of each word
     return formatted
       .split(" ")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -15,7 +33,6 @@ export const DataTable = ({ data }) => {
   };
 
   const formatValue = (key, value) => {
-    // Check if the key suggests it's an amount
     const isAmount = /amount|price|total|cost|payment/i.test(key);
     if (isAmount && !isNaN(value)) {
       return `£${parseFloat(value).toFixed(2)}`;
@@ -33,10 +50,9 @@ export const DataTable = ({ data }) => {
     );
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-xl w-full">
+    <div className="bg-white p-4 mt-6 rounded-lg shadow-xl w-full">
       <h2 className="text-xl font-semibold mb-4">Data Table</h2>
 
-      {/* Scrollable container */}
       <div className="overflow-auto max-h-[70vh]">
         <table className="min-w-full table-auto border border-gray-200">
           <thead className="bg-gray-100 sticky top-0 z-10">
@@ -71,17 +87,25 @@ export const DataTable = ({ data }) => {
       {/* Action Buttons */}
       <div className="flex justify-end mt-4 space-x-3">
         <button
-          onClick={() => console.log("Export clicked")}
-          className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-grey-700 transition"
+          onClick={handleExport}
+          className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow cursor-pointer"
         >
           Export
         </button>
         <button
           onClick={() => console.log("Save clicked")}
-          className="bg-green-800 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+          className="border border-green-700 text-green-700 hover:bg-green-600 hover:text-white font-semibold py-2 px-4 rounded shadow cursor-pointer"
         >
           Save
         </button>
+        {onToggleChart && (
+          <button
+            onClick={onToggleChart}
+            className="bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold py-2 px-4 rounded shadow cursor-pointer"
+          >
+            Toggle Chart View
+          </button>
+        )}
       </div>
     </div>
   );

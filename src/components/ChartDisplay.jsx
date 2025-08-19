@@ -24,31 +24,43 @@ const COLORS = [
 export const ChartDisplay = ({ data }) => {
   if (!data || data.length === 0) return <p>No chart data available.</p>;
 
+  // Dynamically detect label and value keys
+  const keys = Object.keys(data[0]);
+  const labelKey = keys.find((key) => typeof data[0][key] === "string");
+  const valueKey = keys.find((key) => typeof data[0][key] === "number");
+
+  if (!labelKey || !valueKey) {
+    return <p>Data is not suitable for charting.</p>;
+  }
+
+  // Limit to 10 data points
+  const limitedData = data.slice(0, 10);
+
   return (
-    <div className="flex flex-wrap gap-2 mt-6 mb-7 justify-center">
+    <div className="flex mt-6 mb-7 justify-center">
       {/* Bar Chart */}
-      <BarChart width={500} height={300} data={data}>
+      <BarChart width={500} height={400} data={limitedData}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="Category" />
+        <XAxis dataKey={labelKey} />
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar dataKey="num_retailers" fill="#82ca9d" />
+        <Bar dataKey={valueKey} fill="#82ca9d" />
       </BarChart>
 
       {/* Pie Chart */}
       <PieChart width={400} height={300}>
         <Pie
-          data={data}
-          dataKey="num_retailers"
-          nameKey="Category"
+          data={limitedData}
+          dataKey={valueKey}
+          nameKey={labelKey}
           cx="50%"
           cy="50%"
           outerRadius={100}
           fill="#8884d8"
           label
         >
-          {data.map((entry, index) => (
+          {limitedData.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>

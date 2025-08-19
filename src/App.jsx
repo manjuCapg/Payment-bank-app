@@ -8,6 +8,10 @@ import { useState } from "react";
 import { processQuery } from "./services/apiService";
 import { ChartDisplay } from "./components/ChartDisplay";
 import LookerEmbed from "./components/LookerEmbed";
+import ChartModal from "./components/ChartModal";
+import { LoadingMessage } from "./components/LoadingMessage";
+
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -16,6 +20,7 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDb, setSelectedDb] = useState("Selected Database");
+  const [showChartModal, setShowChartModal] = useState(false);
 
   const isChartable = (data) => {
     if (!Array.isArray(data) || data.length === 0) return false;
@@ -71,6 +76,8 @@ function App() {
         data-cy="header"
       />
 
+      <Toaster position="top-left" />
+
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <div
@@ -91,26 +98,41 @@ function App() {
           />
         </div>
         {/* Main Content */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-8">
-          <Instructions
-            onNewChat={() => {
-              setQuery("");
-              setChatHistory([]);
-              setResponseData(null);
-            }}
-          />
-          <QueryBox sqlQuery={responseData?.sqlQuery} />
-          {isChartable(responseData?.tabularData) && (
-            <ChartDisplay data={responseData.tabularData} />
-          )}
-          {!isChartable(responseData?.tabularData) &&
-            responseData?.tabularData && (
-              <p className="text-gray-500">
-                This data is not suitable for chart display.
-              </p>
-            )}
+        <div className="flex-1 overflow-hidden">
+          <div className="overflow-y-auto p-4 space-y-8">
+            {/* Instructions should stay visible and interactive */}
+            <Instructions
+              onNewChat={() => {
+                setQuery("");
+                setChatHistory([]);
+                setResponseData(null);
+              }}
+            />
 
-          <DataTable data={responseData?.tabularData} />
+            {/* Wrap rest of content in relative container */}
+            <div className="relative">
+              {isLoading && (
+                <div className="absolute inset-0 bg-white/40 backdrop-blur-sm z-40 flex items-center justify-center">
+                  <LoadingMessage />
+                </div>
+              )}
+
+              <QueryBox sqlQuery={responseData?.sqlQuery} />
+
+              {isChartable(responseData?.tabularData) && (
+                <ChartModal
+                  isOpen={showChartModal}
+                  onClose={() => setShowChartModal(false)}
+                  data={responseData.tabularData}
+                />
+              )}
+
+              <DataTable
+                data={responseData?.tabularData}
+                onToggleChart={() => setShowChartModal(true)}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

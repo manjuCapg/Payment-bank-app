@@ -17,7 +17,7 @@ export default defineConfig({
       },
       "/mongoapi": {
         target:
-          "https://15673827115c716f-dot-europe-west2.notebooks.googleusercontent.com/proxy/8000/docs",
+          "https://genaipayment-backend-719673130781.europe-west1.run.app/proxy/8000",
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/mongoapi/, ""),

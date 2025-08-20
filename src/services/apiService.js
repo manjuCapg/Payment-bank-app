@@ -23,7 +23,7 @@ const mongoApi = axios.create({
   baseURL: mongoBase,
   headers: {
     "Content-type": "application/json",
-    Accept: "application/json", // matches your curl headers
+    Accept: "application/json",
   },
 });
 
@@ -33,14 +33,26 @@ export const getApiByDb = (dbName) => {
   return bigQueryApi;
 };
 
-// Unified query processor
+// Unified query processor with MongoDB-specific tabularData normalization
 export const processQuery = async (question, dbName = "Big Query DB") => {
   const api = getApiByDb(dbName);
   const endpoint = dbName === "Mongo DB" ? "/mongodb_query" : "/process_query";
 
   try {
     const response = await api.post(endpoint, { question });
-    return response.data;
+    const data = response.data;
+
+    // Normalize tabularData only for MongoDB responses
+    if (
+      dbName === "Mongo DB" &&
+      Array.isArray(data?.tabularData) &&
+      data.tabularData.length === 1 &&
+      Array.isArray(data.tabularData[0])
+    ) {
+      data.tabularData = data.tabularData[0];
+    }
+
+    return data;
   } catch (error) {
     console.error(`${dbName} error:`, error.response?.data || error.message);
     throw error;

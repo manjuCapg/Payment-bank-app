@@ -62,6 +62,10 @@ export const DataTable = ({ data, onToggleChart }) => {
       "DiscountRate",
       "FailureRate",
       "FeePercentage",
+      "ChargebackRate",
+      "credit_percentage",
+      "debit_percentage",
+      "GrowthRate",
     ];
 
     if (poundFields.includes(key) && !isNaN(value)) {

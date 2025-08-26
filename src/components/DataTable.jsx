@@ -1,6 +1,5 @@
 import React from "react";
 import { FaDatabase } from "react-icons/fa";
-
 import toast from "react-hot-toast";
 
 export const DataTable = ({ data, onToggleChart }) => {
@@ -33,12 +32,72 @@ export const DataTable = ({ data, onToggleChart }) => {
   };
 
   const formatValue = (key, value) => {
-    console.log("Formatting value for key:", key, "value:", value);
-    const poundFields = ["PaymentAmount", "TaxAmount", "Interchange"];
+    const poundFields = [
+      "PaymentAmount",
+      "TaxAmount",
+      "Interchange",
+      "AverageTransactionAmount",
+      "TotalTransactionAmount",
+      "RefundAmount",
+      "ChargebackAmount",
+      "NetAmount",
+      "TransactionAmount",
+      "Amount",
+      "TotalAmount",
+      "Balance",
+      "Revenue",
+      "Cost",
+      "Profit",
+      "Loss",
+      "Expense",
+      "Income",
+      "Earnings",
+      "Sales",
+      "Commission",
+      "Payout",
+      "Withdrawal",
+    ];
+    const percentageFields = [
+      "SuccessRate",
+      "DiscountRate",
+      "FailureRate",
+      "FeePercentage",
+    ];
+
     if (poundFields.includes(key) && !isNaN(value)) {
       return `£${parseFloat(value).toFixed(2)}`;
     }
+
+    if (percentageFields.includes(key) && !isNaN(value)) {
+      return `${parseFloat(value).toFixed(2)}%`;
+    }
+
     return value !== null ? value.toString() : "—";
+  };
+
+  const getTotalPaymentAmount = () => {
+    return data.reduce((sum, row) => {
+      const val = parseFloat(row.PaymentAmount);
+      return sum + (isNaN(val) ? 0 : val);
+    }, 0);
+  };
+
+  const getAverageFeePercentage = () => {
+    const values = data
+      .map((row) => parseFloat(row.FeePercentage))
+      .filter((val) => !isNaN(val));
+    if (values.length === 0) return 0;
+    const sum = values.reduce((acc, val) => acc + val, 0);
+    return sum / values.length;
+  };
+
+  const getAverageTransactionAmount = () => {
+    const values = data
+      .map((row) => parseFloat(row.TransactionAmount))
+      .filter((val) => !isNaN(val));
+    if (values.length === 0) return 0;
+    const sum = values.reduce((acc, val) => acc + val, 0);
+    return sum / values.length;
   };
 
   if (!data || data.length === 0)
@@ -57,7 +116,6 @@ export const DataTable = ({ data, onToggleChart }) => {
     >
       <h2 className="text-xl font-semibold mb-4">Data Table</h2>
 
-      {/* Scrollable Table */}
       <div
         className="overflow-auto grow rounded"
         style={{ maxHeight: "500px" }}
@@ -88,11 +146,27 @@ export const DataTable = ({ data, onToggleChart }) => {
                 ))}
               </tr>
             ))}
+            {/* Summary Row */}
+            <tr className="bg-gray-100 font-semibold">
+              {Object.keys(data[0]).map((key, i) => (
+                <td
+                  key={i}
+                  className="p-2 border-t border-gray-300 whitespace-nowrap"
+                >
+                  {key === "PaymentAmount"
+                    ? `Total: £${getTotalPaymentAmount().toFixed(2)}`
+                    : key === "FeePercentage"
+                    ? `Avg: ${getAverageFeePercentage().toFixed(2)}%`
+                    : key === "TransactionAmount"
+                    ? `Avg: £${getAverageTransactionAmount().toFixed(2)}`
+                    : ""}
+                </td>
+              ))}
+            </tr>
           </tbody>
         </table>
       </div>
 
-      {/* Buttons */}
       <div className="mt-4 py-4 px-4 bg-white flex flex-col sm:flex-row sm:justify-end sm:space-x-3 space-y-2 sm:space-y-0">
         <button
           onClick={handleExport}

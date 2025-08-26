@@ -1,4 +1,5 @@
 import "./App.css";
+import { useEffect } from "react";
 import { Header } from "./components/Header";
 import { Instructions } from "./components/Instructions";
 import Sidebar from "./components/Sidebar";
@@ -21,6 +22,25 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDb, setSelectedDb] = useState("Selected Database");
   const [showChartModal, setShowChartModal] = useState(false);
+
+  useEffect(() => {
+    const chatResponse = localStorage.getItem("chatResponse");
+    const sqlQuery = localStorage.getItem("sqlQuery");
+    const tabularData = localStorage.getItem("tabularData");
+    const chatHistory = localStorage.getItem("chatHistory");
+
+    if (chatResponse || sqlQuery || tabularData) {
+      setResponseData({
+        chatResponse: chatResponse || "",
+        sqlQuery: sqlQuery || "",
+        tabularData: tabularData ? JSON.parse(tabularData) : [],
+      });
+    }
+
+    if (chatHistory) {
+      setChatHistory(JSON.parse(chatHistory));
+    }
+  }, []);
 
   const isChartable = (data) => {
     if (!Array.isArray(data) || data.length === 0) return false;
@@ -52,16 +72,28 @@ function App() {
 
       const apiResponse = await processQuery(query, selectedDb);
 
-      setChatHistory((prev) => [
-        ...prev,
+      const newHistory = [
+        ...updatedHistory,
         { text: apiResponse.chatResponse || "Query processed", isUser: false },
-      ]);
+      ];
+
+      // ✅ Save full chat history
+      localStorage.setItem("chatHistory", JSON.stringify(newHistory));
+      localStorage.setItem("chatResponse", apiResponse.chatResponse || "");
+      localStorage.setItem("sqlQuery", apiResponse.sqlQuery || "");
+      localStorage.setItem(
+        "tabularData",
+        JSON.stringify(apiResponse.tabularData || [])
+      );
+
+      setChatHistory(newHistory);
       setResponseData(apiResponse);
     } catch (error) {
-      setChatHistory((prev) => [
-        ...prev,
-        { text: "Error processing query", isUser: false },
-      ]);
+      const errorMessage = { text: "Error processing query", isUser: false };
+      const errorHistory = [...updatedHistory, errorMessage];
+
+      localStorage.setItem("chatHistory", JSON.stringify(errorHistory));
+      setChatHistory(errorHistory);
       console.error("Error processing query:", error);
     } finally {
       setIsLoading(false);
@@ -106,6 +138,9 @@ function App() {
                 setQuery("");
                 setChatHistory([]);
                 setResponseData(null);
+                localStorage.removeItem("chatResponse");
+                localStorage.removeItem("sqlQuery");
+                localStorage.removeItem("tabularData");
               }}
             />
 

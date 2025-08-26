@@ -1,9 +1,27 @@
 import React from "react";
+import { useState, useRef, useEffect } from "react";
 import { FaDatabase } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 export const DataTable = ({ data, onToggleChart }) => {
-  const handleExport = () => {
+  const [showExportOptions, setShowExportOptions] = useState(false);
+
+  const exportRef = useRef(null);
+
+  // Close popup when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (exportRef.current && !exportRef.current.contains(event.target)) {
+        setShowExportOptions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleExportJSON = () => {
     try {
       const jsonData = JSON.stringify(data, null, 2);
       const blob = new Blob([jsonData], { type: "application/json" });
@@ -16,9 +34,35 @@ export const DataTable = ({ data, onToggleChart }) => {
       link.click();
       document.body.removeChild(link);
 
-      toast.success("Data successfully downloaded!");
+      toast.success("JSON downloaded!");
     } catch (error) {
-      toast.error("Failed to export data.", error);
+      toast.error("Failed to export JSON.", error);
+    }
+  };
+
+  const handleExportCSV = () => {
+    try {
+      const headers = Object.keys(data[0]).join(",");
+      const rows = data.map((row) =>
+        Object.values(row)
+          .map((val) => `"${val}"`)
+          .join(",")
+      );
+      const csvContent = [headers, ...rows].join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "transaction_data.csv";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("CSV downloaded!");
+    } catch (error) {
+      toast.error("Failed to export CSV.", error);
     }
   };
 
@@ -173,17 +217,19 @@ export const DataTable = ({ data, onToggleChart }) => {
 
       <div className="mt-4 py-4 px-4 bg-white flex flex-col sm:flex-row sm:justify-end sm:space-x-3 space-y-2 sm:space-y-0">
         <button
-          onClick={handleExport}
+          onClick={() => setShowExportOptions(true)}
           className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow cursor-pointer w-full sm:w-auto"
         >
           Export
         </button>
+
         <button
           onClick={() => console.log("Save clicked")}
           className="border border-green-700 text-green-700 hover:bg-green-600 hover:text-white font-semibold py-2 px-4 rounded shadow cursor-pointer w-full sm:w-auto"
         >
           Save
         </button>
+
         {onToggleChart && (
           <button
             onClick={onToggleChart}
@@ -193,6 +239,39 @@ export const DataTable = ({ data, onToggleChart }) => {
           </button>
         )}
       </div>
+
+      {/* Modal Popup */}
+      {showExportOptions && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-white/40 bg-opacity-90">
+          <div className="bg-white rounded-lg shadow-xl p-6 w-80 text-center border border-gray-300">
+            <h3 className="text-lg font-semibold mb-4">Choose Export Format</h3>
+            <button
+              onClick={() => {
+                handleExportCSV();
+                setShowExportOptions(false);
+              }}
+              className="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mb-3"
+            >
+              Export as CSV
+            </button>
+            <button
+              onClick={() => {
+                handleExportJSON();
+                setShowExportOptions(false);
+              }}
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded mb-3"
+            >
+              Export as JSON
+            </button>
+            <button
+              onClick={() => setShowExportOptions(false)}
+              className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 py-2 px-4 rounded"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

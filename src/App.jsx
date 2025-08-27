@@ -11,6 +11,7 @@ import { ChartDisplay } from "./components/ChartDisplay";
 import LookerEmbed from "./components/LookerEmbed";
 import ChartModal from "./components/ChartModal";
 import { LoadingMessage } from "./components/LoadingMessage";
+import toast from "react-hot-toast";
 
 import { Toaster } from "react-hot-toast";
 
@@ -28,6 +29,7 @@ function App() {
     const sqlQuery = localStorage.getItem("sqlQuery");
     const tabularData = localStorage.getItem("tabularData");
     const chatHistory = localStorage.getItem("chatHistory");
+    const storedDb = localStorage.getItem("selectedDb");
 
     if (chatResponse || sqlQuery || tabularData) {
       setResponseData({
@@ -39,6 +41,10 @@ function App() {
 
     if (chatHistory) {
       setChatHistory(JSON.parse(chatHistory));
+    }
+
+    if (storedDb) {
+      setSelectedDb(storedDb);
     }
   }, []);
 
@@ -67,6 +73,7 @@ function App() {
     try {
       if (selectedDb === "Selected Database") {
         alert("Please select a valid database to send the query.");
+        setIsLoading(false);
         return;
       }
 
@@ -77,7 +84,6 @@ function App() {
         { text: apiResponse.chatResponse || "Query processed", isUser: false },
       ];
 
-      // ✅ Save full chat history
       localStorage.setItem("chatHistory", JSON.stringify(newHistory));
       localStorage.setItem("chatResponse", apiResponse.chatResponse || "");
       localStorage.setItem("sqlQuery", apiResponse.sqlQuery || "");
@@ -85,6 +91,7 @@ function App() {
         "tabularData",
         JSON.stringify(apiResponse.tabularData || [])
       );
+      localStorage.setItem("selectedDb", selectedDb);
 
       setChatHistory(newHistory);
       setResponseData(apiResponse);
@@ -94,6 +101,15 @@ function App() {
 
       localStorage.setItem("chatHistory", JSON.stringify(errorHistory));
       setChatHistory(errorHistory);
+      toast.error("Query failed. Please try again.");
+
+      // ✅ Clear previous response data
+      setResponseData({
+        chatResponse: "",
+        sqlQuery: "",
+        tabularData: [],
+      });
+
       console.error("Error processing query:", error);
     } finally {
       setIsLoading(false);
@@ -141,6 +157,7 @@ function App() {
                 localStorage.removeItem("chatResponse");
                 localStorage.removeItem("sqlQuery");
                 localStorage.removeItem("tabularData");
+                localStorage.removeItem("selectedDb");
               }}
             />
 
@@ -165,6 +182,7 @@ function App() {
               <DataTable
                 data={responseData?.tabularData}
                 onToggleChart={() => setShowChartModal(true)}
+                selectedDb={selectedDb}
               />
             </div>
           </div>

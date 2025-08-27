@@ -1,10 +1,11 @@
 import React from "react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { FaDatabase } from "react-icons/fa";
 import toast from "react-hot-toast";
 
-export const DataTable = ({ data, onToggleChart }) => {
+export const DataTable = ({ data, onToggleChart, selectedDb }) => {
   const [showExportOptions, setShowExportOptions] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   const exportRef = useRef(null);
 
@@ -20,6 +21,25 @@ export const DataTable = ({ data, onToggleChart }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const sortedData = useMemo(() => {
+    if (!sortConfig.key) return data;
+
+    const sorted = [...data].sort((a, b) => {
+      const aVal = a[sortConfig.key];
+      const bVal = b[sortConfig.key];
+
+      if (typeof aVal === "number" && typeof bVal === "number") {
+        return sortConfig.direction === "asc" ? aVal - bVal : bVal - aVal;
+      }
+
+      return sortConfig.direction === "asc"
+        ? aVal.toString().localeCompare(bVal.toString())
+        : bVal.toString().localeCompare(aVal.toString());
+    });
+
+    return sorted;
+  }, [data, sortConfig]);
 
   const handleExportJSON = () => {
     try {
@@ -147,6 +167,17 @@ export const DataTable = ({ data, onToggleChart }) => {
     const sum = values.reduce((acc, val) => acc + val, 0);
     return sum / values.length;
   };
+  const handleSort = (key) => {
+    setSortConfig((prev) => {
+      if (prev.key === key) {
+        return {
+          key,
+          direction: prev.direction === "asc" ? "desc" : "asc",
+        };
+      }
+      return { key, direction: "asc" };
+    });
+  };
 
   if (!data || data.length === 0)
     return (
@@ -162,7 +193,15 @@ export const DataTable = ({ data, onToggleChart }) => {
       className="bg-white p-4 mt-6 rounded-lg shadow-xl w-full flex flex-col"
       style={{ maxHeight: "calc(100vh - 240px)" }}
     >
-      <h2 className="text-xl font-semibold mb-4">Data Table</h2>
+      <div className="text-sm text-gray-500 mb-1 flex justify-between items-center">
+        <h2 className="text-xl font-semibold mb-4">Data Table</h2>{" "}
+        {data?.length > 0 && (
+          <p>
+            Showing results from:{" "}
+            <span className="font-medium text-green-700">{selectedDb}</span>
+          </p>
+        )}
+      </div>
 
       <div
         className="overflow-auto grow rounded"
@@ -174,15 +213,21 @@ export const DataTable = ({ data, onToggleChart }) => {
               {Object.keys(data[0]).map((key) => (
                 <th
                   key={key}
-                  className="p-2 text-left border-b border-gray-300 whitespace-nowrap"
+                  onClick={() => handleSort(key)}
+                  className="p-2 text-left border-b border-gray-300 whitespace-nowrap cursor-pointer select-none"
                 >
                   {formatHeader(key)}
+                  {sortConfig.key === key && (
+                    <span className="ml-1">
+                      {sortConfig.direction === "asc" ? "▲" : "▼"}
+                    </span>
+                  )}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {data.map((row, idx) => (
+            {sortedData.map((row, idx) => (
               <tr key={idx} className="hover:bg-gray-50">
                 {Object.entries(row).map(([key, val], i) => (
                   <td

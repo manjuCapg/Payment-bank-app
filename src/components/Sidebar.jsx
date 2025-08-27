@@ -5,7 +5,7 @@ import {
   FaSpinner,
 } from "react-icons/fa";
 import DbSelection from "./DbSelection";
-import React, { useState, useRef, useLayoutEffect, useEffect } from "react";
+import React, { useState, useRef, useLayoutEffect } from "react";
 import { LoadingMessage } from "./LoadingMessage";
 import { useSuggestions } from "../hooks/useSuggestions";
 
@@ -46,12 +46,14 @@ const Sidebar = ({
       setError("Please select a valid database");
       return;
     }
+
+    // ✅ Clear previous error
     if (error) {
       setError("");
     }
 
     setQuery(finalQuery);
-    onSend();
+    onSend(); // This triggers handleSend in App.js
   };
 
   const handleMicClick = () => {

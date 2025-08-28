@@ -5,6 +5,11 @@ thead {
 }
 
 
+body {
+  overscroll-behavior-x: none;
+}
+
+
 /* .table-wrapper {
   max-height: 400px;
   overflow-y: auto;

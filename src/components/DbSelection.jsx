@@ -27,7 +27,7 @@ const DbSelection = ({ onDbChange }) => {
       {" "}
       {/* Set a fixed width */} {/* Set a fixed width */}
       <div className="m-1 text-sm font-medium text-gray-700">
-        Select your Database
+        Select solution
       </div>
       <button
         onClick={() => setOpen(!open)}

@@ -39,7 +39,11 @@ export const processQuery = async (question, dbName = "Big Query DB") => {
   const endpoint = dbName === "Mongo DB" ? "/mongodb_query" : "/process_query";
 
   try {
-    const response = await api.post(endpoint, { question });
+    const response = await api.post(
+      endpoint,
+      { question },
+      { timeout: 180000 }
+    );
     const data = response.data;
 
     // Normalize tabularData only for MongoDB responses
@@ -54,7 +58,11 @@ export const processQuery = async (question, dbName = "Big Query DB") => {
 
     return data;
   } catch (error) {
-    console.error(`${dbName} error:`, error.response?.data || error.message);
+    if (error.code === "ECONNABORTED") {
+      console.error(`${dbName} request timed out after 3 minutes.`);
+    } else {
+      console.error(`${dbName} error:`, error.response?.data || error.message);
+    }
     throw error;
   }
 };

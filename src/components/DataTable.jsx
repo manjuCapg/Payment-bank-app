@@ -87,12 +87,44 @@ export const DataTable = ({ data, onToggleChart, selectedDb }) => {
   };
 
   const formatHeader = (key) => {
+    const percentageFields = [
+      "SuccessRate",
+      "DiscountRate",
+      "FailureRate",
+      "FeePercentage",
+      "ChargebackRate",
+      "credit_percentage",
+      "debit_percentage",
+      "GrowthRate",
+      "fee_percentage",
+      "success_rate",
+      "failure_rate",
+      "discount_rate",
+      "chargeback_rate",
+      "growth_rate",
+      "debitPercentage",
+      "creditPercentage",
+      "feePercentage",
+      "successPercentage",
+      "failurePercentage",
+      "discountPercentage",
+      "chargebackPercentage",
+      "growthPercentage",
+      "percentage",
+    ];
+
     let formatted = key.replace(/_/g, " ");
     formatted = formatted.replace(/([a-z])([A-Z])/g, "$1 $2");
-    return formatted
+    formatted = formatted
       .split(" ")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
+
+    if (percentageFields.includes(key)) {
+      formatted += " (%)";
+    }
+
+    return formatted;
   };
 
   const formatValue = (key, value) => {
@@ -130,6 +162,9 @@ export const DataTable = ({ data, onToggleChart, selectedDb }) => {
       "credit_percentage",
       "debit_percentage",
       "GrowthRate",
+      "fee_percentage",
+      "success_rate",
+      "percentage",
     ];
 
     if (poundFields.includes(key) && !isNaN(value)) {
@@ -137,7 +172,7 @@ export const DataTable = ({ data, onToggleChart, selectedDb }) => {
     }
 
     if (percentageFields.includes(key) && !isNaN(value)) {
-      return `${parseFloat(value).toFixed(2)}%`;
+      return `${parseFloat(value).toFixed(1)}%`;
     }
 
     return value !== null ? value.toString() : "—";
@@ -249,7 +284,7 @@ export const DataTable = ({ data, onToggleChart, selectedDb }) => {
                   {key === "PaymentAmount"
                     ? `Total: £${getTotalPaymentAmount().toFixed(2)}`
                     : key === "FeePercentage"
-                    ? `Avg: ${getAverageFeePercentage().toFixed(2)}%`
+                    ? `Avg: ${getAverageFeePercentage()}`
                     : key === "TransactionAmount"
                     ? `Avg: £${getAverageTransactionAmount().toFixed(2)}`
                     : ""}

@@ -183,7 +183,7 @@ const Sidebar = ({
 
         <form onSubmit={handleSubmit} className="mt-3 space-y-2">
           <div className="text-sm font-medium text-gray-700 m-1">
-            Type your query and speak
+            Type your query or use the microphone icon to speak{" "}
           </div>
           <div className="relative">
             <textarea

@@ -152,6 +152,8 @@ export const DataTable = ({ data, onToggleChart, selectedDb }) => {
       "Commission",
       "Payout",
       "Withdrawal",
+      "avg_payment_amount",
+      "total_payment_amount",
     ];
     const percentageFields = [
       "SuccessRate",
@@ -168,7 +170,10 @@ export const DataTable = ({ data, onToggleChart, selectedDb }) => {
     ];
 
     if (poundFields.includes(key) && !isNaN(value)) {
-      return `£${parseFloat(value).toFixed(2)}`;
+      return `£${parseFloat(value).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
     }
 
     if (percentageFields.includes(key) && !isNaN(value)) {

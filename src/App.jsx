@@ -178,12 +178,13 @@ function App() {
                   data={responseData.tabularData}
                 />
               )}
-
-              <DataTable
-                data={responseData?.tabularData}
-                onToggleChart={() => setShowChartModal(true)}
-                selectedDb={selectedDb}
-              />
+              <div className="relative">
+                <DataTable
+                  data={responseData?.tabularData || []}
+                  onToggleChart={() => setShowChartModal(true)}
+                  selectedDb={selectedDb}
+                />
+              </div>
             </div>
           </div>
         </div>

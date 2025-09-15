@@ -12,6 +12,7 @@ import LookerEmbed from "./components/LookerEmbed";
 import ChartModal from "./components/ChartModal";
 import { LoadingMessage } from "./components/LoadingMessage";
 import toast from "react-hot-toast";
+import { v4 as uuidv4 } from "uuid";
 
 import { Toaster } from "react-hot-toast";
 
@@ -23,6 +24,19 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDb, setSelectedDb] = useState("Selected Database");
   const [showChartModal, setShowChartModal] = useState(false);
+  const [sessionId, setSessionId] = useState(uuidv4());
+
+  // Reset chat & generate new session
+  const startNewChat = () => {
+    setQuery("");
+    setChatHistory([]);
+    setResponseData(null);
+    setSessionId(uuidv4()); // ✅ New session
+    localStorage.removeItem("chatResponse");
+    localStorage.removeItem("sqlQuery");
+    localStorage.removeItem("tabularData");
+    localStorage.removeItem("selectedDb");
+  };
 
   useEffect(() => {
     const chatResponse = localStorage.getItem("chatResponse");
@@ -62,7 +76,7 @@ function App() {
     return hasNumeric && hasLabel;
   };
 
-  const handleSend = async () => {
+  const handleSend = async (query, sessionIdFromSidebar) => {
     if (!query.trim()) return;
 
     const updatedHistory = [...chatHistory, { text: query, isUser: true }];
@@ -77,7 +91,11 @@ function App() {
         return;
       }
 
-      const apiResponse = await processQuery(query, selectedDb);
+      const apiResponse = await processQuery(
+        query,
+        selectedDb,
+        sessionIdFromSidebar
+      );
 
       const newHistory = [
         ...updatedHistory,
@@ -149,17 +167,7 @@ function App() {
         <div className="flex-1 overflow-hidden">
           <div className="overflow-y-auto p-4 space-y-8">
             {/* Instructions should stay visible and interactive */}
-            <Instructions
-              onNewChat={() => {
-                setQuery("");
-                setChatHistory([]);
-                setResponseData(null);
-                localStorage.removeItem("chatResponse");
-                localStorage.removeItem("sqlQuery");
-                localStorage.removeItem("tabularData");
-                localStorage.removeItem("selectedDb");
-              }}
-            />
+            <Instructions onNewChat={startNewChat} sessionId={sessionId} />
 
             {/* Wrap rest of content in relative container */}
             <div className="relative">

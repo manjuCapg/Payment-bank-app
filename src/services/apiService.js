@@ -34,14 +34,18 @@ export const getApiByDb = (dbName) => {
 };
 
 // Unified query processor with MongoDB-specific tabularData normalization
-export const processQuery = async (question, dbName = "Big Query DB") => {
+export const processQuery = async (
+  question,
+  dbName = "Big Query DB",
+  sessionId = 1
+) => {
   const api = getApiByDb(dbName);
   const endpoint = dbName === "Mongo DB" ? "/mongodb_query" : "/process_query";
 
   try {
     const response = await api.post(
       endpoint,
-      { question },
+      { question, session_id: sessionId },
       { timeout: 180000 }
     );
     const data = response.data;

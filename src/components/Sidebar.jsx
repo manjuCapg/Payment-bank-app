@@ -8,7 +8,7 @@ import DbSelection from "./DbSelection";
 import React, { useState, useRef, useLayoutEffect } from "react";
 import { LoadingMessage } from "./LoadingMessage";
 import { useSuggestions } from "../hooks/useSuggestions";
-
+import { getSessionIdForQuestion } from "../hooks/sessionManager";
 const Sidebar = ({
   query,
   setQuery,
@@ -52,8 +52,12 @@ const Sidebar = ({
       setError("");
     }
 
+    const sessionId = getSessionIdForQuestion(finalQuery); // ✅
+    console.log("Determined sessionId:", sessionId); // ✅
+
+    // If there's a prediction and the user hasn't accepted it, use the prediction
     setQuery(finalQuery);
-    onSend(); // This triggers handleSend in App.js
+    onSend(finalQuery, sessionId); // This triggers handleSend in App.js
   };
 
   const handleMicClick = () => {

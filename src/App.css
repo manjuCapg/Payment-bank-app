@@ -10,6 +10,19 @@ body {
 }
 
 
+.ag-theme-alpine .ag-header {
+  background-color: #f3f4f6 !important; /* Tailwind gray-100 */
+  color: #111827 !important; /* Tailwind gray-900 */
+}
+
+.ag-theme-alpine .ag-row-hover {
+  background-color: #e5e7eb !important; /* Tailwind gray-200 */
+}
+
+.ag-theme-alpine {
+  border-radius: 8px;
+  padding: 8px;
+}
 /* .table-wrapper {
   max-height: 400px;
   overflow-y: auto;

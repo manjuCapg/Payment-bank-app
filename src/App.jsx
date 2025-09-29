@@ -1,20 +1,20 @@
 import "./App.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Header } from "./components/Header";
 import { Instructions } from "./components/Instructions";
 import Sidebar from "./components/Sidebar";
 import { QueryBox } from "./components/QueryBox";
 import { DataTable } from "./components/DataTable";
-import { useState } from "react";
-import { processQuery } from "./services/apiService";
+import {
+  processQuery,
+  getSessionId,
+  resetSessionId,
+} from "./services/apiService";
 import { ChartDisplay } from "./components/ChartDisplay";
 import LookerEmbed from "./components/LookerEmbed";
 import ChartModal from "./components/ChartModal";
 import { LoadingMessage } from "./components/LoadingMessage";
-import toast from "react-hot-toast";
-import { v4 as uuidv4 } from "uuid";
-
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -24,14 +24,14 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDb, setSelectedDb] = useState("Selected Database");
   const [showChartModal, setShowChartModal] = useState(false);
-  const [sessionId, setSessionId] = useState(uuidv4());
+  const [sessionId, setSessionId] = useState(getSessionId());
 
-  // Reset chat & generate new session
   const startNewChat = () => {
     setQuery("");
     setChatHistory([]);
     setResponseData(null);
-    setSessionId(uuidv4()); // ✅ New session
+    resetSessionId();
+    setSessionId(getSessionId());
     localStorage.removeItem("chatResponse");
     localStorage.removeItem("sqlQuery");
     localStorage.removeItem("tabularData");
@@ -64,7 +64,6 @@ function App() {
 
   const isChartable = (data) => {
     if (!Array.isArray(data) || data.length === 0) return false;
-
     const sample = data[0];
     const hasNumeric = Object.values(sample).some(
       (val) => typeof val === "number"
@@ -72,7 +71,6 @@ function App() {
     const hasLabel = Object.values(sample).some(
       (val) => typeof val === "string"
     );
-
     return hasNumeric && hasLabel;
   };
 
@@ -121,7 +119,6 @@ function App() {
       setChatHistory(errorHistory);
       toast.error("Query failed. Please try again.");
 
-      // ✅ Clear previous response data
       setResponseData({
         chatResponse: "",
         sqlQuery: "",
@@ -135,17 +132,14 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100 ">
+    <div className="flex flex-col h-screen bg-gray-100">
       <Header
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
         sidebarOpen={sidebarOpen}
         data-cy="header"
       />
-
       <Toaster position="top-left" />
-
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
         <div
           className={`transition-all duration-300 ease-in-out ${
             sidebarOpen ? "w-120" : "w-0"
@@ -163,22 +157,16 @@ function App() {
             data-cy="sidebar-component"
           />
         </div>
-        {/* Main Content */}
         <div className="flex-1 overflow-hidden">
           <div className="overflow-y-auto p-4 space-y-8">
-            {/* Instructions should stay visible and interactive */}
             <Instructions onNewChat={startNewChat} sessionId={sessionId} />
-
-            {/* Wrap rest of content in relative container */}
             <div className="relative">
               {isLoading && (
                 <div className="absolute inset-0 bg-white/40 backdrop-blur-sm z-40 flex items-center justify-center">
                   <LoadingMessage />
                 </div>
               )}
-
               <QueryBox sqlQuery={responseData?.sqlQuery} />
-
               {isChartable(responseData?.tabularData) && (
                 <ChartModal
                   isOpen={showChartModal}

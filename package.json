@@ -10,9 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ag-grid-community/client-side-row-model": "^32.3.9",
+    "@ag-grid-community/core": "^32.3.9",
+    "@ag-grid-community/csv-export": "^32.3.9",
+    "@ag-grid-community/react": "^32.3.9",
+    "@ag-grid-community/styles": "^32.3.9",
     "@grammarly/editor-sdk-react": "^2.5.5",
     "@looker/embed-sdk": "^2.0.6",
     "@tailwindcss/vite": "^4.1.11",
+    "ag-grid-community": "^34.1.2",
+    "ag-grid-react": "^34.1.2",
     "axios": "^1.11.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -20,7 +27,8 @@
     "react-icons": "^5.5.0",
     "recharts": "^3.1.2",
     "tailwind-scrollbar": "^4.0.2",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

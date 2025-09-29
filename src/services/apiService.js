@@ -1,4 +1,20 @@
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+
+// Session ID management
+export const getSessionId = () => {
+  let sessionId = localStorage.getItem("chat_session_id");
+  if (!sessionId) {
+    sessionId = uuidv4();
+    localStorage.setItem("chat_session_id", sessionId);
+  }
+  return sessionId;
+};
+
+export const resetSessionId = () => {
+  const newSessionId = uuidv4();
+  localStorage.setItem("chat_session_id", newSessionId);
+};
 
 // Base URLs for each DB depending on environment
 const bigQueryBase =
@@ -37,7 +53,7 @@ export const getApiByDb = (dbName) => {
 export const processQuery = async (
   question,
   dbName = "Big Query DB",
-  sessionId = 1
+  sessionId = getSessionId() // Automatically fetch session ID
 ) => {
   const api = getApiByDb(dbName);
   const endpoint = dbName === "Mongo DB" ? "/mongodb_query" : "/process_query";
@@ -45,7 +61,7 @@ export const processQuery = async (
   try {
     const response = await api.post(
       endpoint,
-      { question, session_id: sessionId },
+      { question, session_id: String(sessionId) },
       { timeout: 180000 }
     );
     const data = response.data;

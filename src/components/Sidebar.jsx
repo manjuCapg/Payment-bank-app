@@ -8,7 +8,8 @@ import DbSelection from "./DbSelection";
 import React, { useState, useRef, useLayoutEffect } from "react";
 import { LoadingMessage } from "./LoadingMessage";
 import { useSuggestions } from "../hooks/useSuggestions";
-import { getSessionIdForQuestion } from "../hooks/sessionManager";
+
+import { getSessionId } from "../services/apiService"; // adjust path if needed
 const Sidebar = ({
   query,
   setQuery,
@@ -52,7 +53,7 @@ const Sidebar = ({
       setError("");
     }
 
-    const sessionId = getSessionIdForQuestion(finalQuery); // ✅
+    const sessionId = getSessionId(); // ✅
     console.log("Determined sessionId:", sessionId); // ✅
 
     // If there's a prediction and the user hasn't accepted it, use the prediction

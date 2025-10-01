@@ -213,7 +213,7 @@ export const DataTable = ({ data, onToggleChart, selectedDb }) => {
         </table>
       </div>
 
-      <div className="mt-4 py-4 px-4 bg-white flex flex-col sm:flex-row sm:justify-end sm:space-x-3 space-y-2 sm:space-y-0">
+      <div className="mt-4 mb-4 py-4 px-4 bg-white flex flex-col sm:flex-row sm:justify-end sm:space-x-3 space-y-2 sm:space-y-0">
         <button
           onClick={() => setShowExportOptions(true)}
           className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow cursor-pointer w-full sm:w-auto"

@@ -2,10 +2,10 @@
 import { useEffect, useState } from "react";
 
 const suggestions = [
-  "Show me the top 10 transactions",
-  "What is the average transaction amount?",
+  "which city has the most transactions for grocery retailers?",
+  "I'm the owner of Urban Vogue. From looking at other retailers similar to me, what percentage of sales do they generate from online payments?",
   "List all payment types",
-  "Show transactions by date",
+  "For the cities where Morrisons is not present, which city has the most transactions for grocery retailers?",
   "Which payment instrument type has the highest average transaction amount?",
 ];
 

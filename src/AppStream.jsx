@@ -98,7 +98,21 @@ function AppStream() {
         try {
             await streamProcessQuery(query, selectedDb, {
                 onStatus: (statusEvent) => {
-                    setStreamingStep(statusEvent.step || "Processing...");
+                    const step = statusEvent.step || "Processing...";
+                    setStreamingStep(step);
+
+                    setChatHistory(currentHistory => {
+                        const newHistory = [...currentHistory];
+                        if (newHistory.length === 0) return newHistory;
+
+                        const lastMsg = { ...newHistory[newHistory.length - 1] };
+                        if (!lastMsg.isUser) {
+                            lastMsg.text = `Status: ${step}`;
+                            lastMsg.isStreaming = true;
+                            newHistory[newHistory.length - 1] = lastMsg;
+                        }
+                        return newHistory;
+                    });
                 },
                 onToken: (token) => {
                     currentBotText += token;

@@ -109,12 +109,17 @@ function handleEvent(event, isMongo, { onStatus, onToken, onData }) {
         // NOTE: apiService.js normalizes `tabularData`. 
         // If backend "cloned" logic, likely structure is similar but wrapped in event.
         // Let's pass it to onData.
-        if (onData) onData({ tabularData: event.output || event.result, chatResponse: event.text || event.answer });
+    } else if (event.type === "final_result") {
+        if (onData) {
+            onData({
+                tabularData: event.tabularData || [],
+                sqlQuery: event.sqlQuery || "",
+                chatResponse: event.chatResponse || ""
+            });
+        }
     } else if (event.type === "tool_call") {
-        // Maybe show status for tool call
         if (onStatus) onStatus({ step: `Calling tool: ${event.tool || "Unknown"}` });
     } else if (event.type === "tool_output") {
-        // Maybe show status
         if (onStatus) onStatus({ step: `Tool output received` });
     }
 }

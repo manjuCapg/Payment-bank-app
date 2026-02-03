@@ -24,7 +24,7 @@ export const streamProcessQuery = async (
     // Based on walkthrough:
     // process_query -> stream_process_query
     // mongodb_query -> stream_mongodb_query
-    const endpointPath = isMongo ? "/stream_mongodb_query" : "/stream_process_query";
+    const endpointPath = isMongo ? "/mongodb_query" : "/process_query";
     const url = `${baseUrl}${endpointPath}`;
 
     try {

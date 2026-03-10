@@ -2,7 +2,7 @@ import { FaChevronDown } from "react-icons/fa";
 import React, { useEffect, useRef, useState } from "react";
 
 const DbSelection = ({ onDbChange }) => {
-  const options = ["Selected Database", "Big Query DB", "Mongo DB"];
+  const options = ["Selected Database", "Big Query DB", "Mongo DB", "Databricks DB"];
   const [selected, setSelected] = useState(options[0]);
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);

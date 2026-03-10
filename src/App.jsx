@@ -31,6 +31,11 @@ function App() {
     const chatHistory = localStorage.getItem("chatHistory");
     const storedDb = localStorage.getItem("selectedDb");
 
+    // Initialize session ID
+    if (!localStorage.getItem("sessionId")) {
+      localStorage.setItem("sessionId", crypto.randomUUID());
+    }
+
     if (chatResponse || sqlQuery || tabularData) {
       setResponseData({
         chatResponse: chatResponse || "",
@@ -77,7 +82,8 @@ function App() {
         return;
       }
 
-      const apiResponse = await processQuery(query, selectedDb);
+      const sessionId = localStorage.getItem("sessionId");
+      const apiResponse = await processQuery(query, selectedDb, sessionId);
 
       const newHistory = [
         ...updatedHistory,
@@ -129,9 +135,8 @@ function App() {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <div
-          className={`transition-all duration-300 ease-in-out ${
-            sidebarOpen ? "w-120" : "w-0"
-          } overflow-hidden`}
+          className={`transition-all duration-300 ease-in-out ${sidebarOpen ? "w-120" : "w-0"
+            } overflow-hidden`}
           data-cy="sidebar"
         >
           <Sidebar

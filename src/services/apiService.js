@@ -11,6 +11,8 @@ const mongoBase =
     ? "/mongoapi"
     : "https://genaipayment-backend-719673130781.europe-west1.run.app/proxy/8000";
 
+const databricksBase = ""; // Leave blank as requested
+
 // Axios instances
 const bigQueryApi = axios.create({
   baseURL: bigQueryBase,
@@ -27,21 +29,31 @@ const mongoApi = axios.create({
   },
 });
 
+const databricksApi = axios.create({
+  baseURL: databricksBase,
+  headers: {
+    "Content-type": "application/json",
+  },
+});
+
 // Function to get the correct API instance based on selected DB
 export const getApiByDb = (dbName) => {
   if (dbName === "Mongo DB") return mongoApi;
+  if (dbName === "Databricks DB") return databricksApi;
   return bigQueryApi;
 };
 
 // Unified query processor with MongoDB-specific tabularData normalization
-export const processQuery = async (question, dbName = "Big Query DB") => {
+export const processQuery = async (question, dbName = "Big Query DB", sessionId) => {
   const api = getApiByDb(dbName);
-  const endpoint = dbName === "Mongo DB" ? "/mongodb_query" : "/process_query";
+  let endpoint = "/process_query";
+  if (dbName === "Mongo DB") endpoint = "/mongodb_query";
+  if (dbName === "Databricks DB") endpoint = "/databricks_query"; // Placeholder endpoint
 
   try {
     const response = await api.post(
       endpoint,
-      { question },
+      { question, session_id: sessionId },
       { timeout: 180000 }
     );
     const data = response.data;

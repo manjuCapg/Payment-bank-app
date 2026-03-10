@@ -36,6 +36,11 @@ function AppStream() {
         const chatHistoryLoaded = localStorage.getItem("chatHistory");
         const storedDb = localStorage.getItem("selectedDb");
 
+        // Initialize session ID
+        if (!localStorage.getItem("sessionId")) {
+            localStorage.setItem("sessionId", crypto.randomUUID());
+        }
+
         if (chatResponse || sqlQuery || tabularData) {
             setResponseData({
                 chatResponse: chatResponse || "",
@@ -96,7 +101,8 @@ function AppStream() {
         let currentBotText = "";
 
         try {
-            await streamProcessQuery(query, selectedDb, {
+            const sessionId = localStorage.getItem("sessionId");
+            await streamProcessQuery(query, selectedDb, sessionId, {
                 onStatus: (statusEvent) => {
                     const step = statusEvent.step || "Processing...";
                     setStreamingStep(step);

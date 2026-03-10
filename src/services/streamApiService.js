@@ -11,20 +11,31 @@ const mongoBase =
         ? "/mongoapi"
         : "https://genaipayment-backend-719673130781.europe-west1.run.app/proxy/8000";
 
+const databricksBase = ""; // Leave blank as requested
+
 export const streamProcessQuery = async (
     question,
     dbName = "Big Query DB",
+    sessionId,
     callbacks = {}
 ) => {
     const { onStatus, onToken, onData, onError } = callbacks;
 
     // Determine endpoint and base URL
     const isMongo = dbName === "Mongo DB";
-    const baseUrl = isMongo ? mongoBase : bigQueryBase;
-    // Based on walkthrough:
-    // process_query -> stream_process_query
-    // mongodb_query -> stream_mongodb_query
-    const endpointPath = isMongo ? "/mongodb_query" : "/process_query";
+    const isDatabricks = dbName === "Databricks DB";
+
+    let baseUrl = bigQueryBase;
+    let endpointPath = "/process_query";
+
+    if (isMongo) {
+        baseUrl = mongoBase;
+        endpointPath = "/mongodb_query";
+    } else if (isDatabricks) {
+        baseUrl = databricksBase;
+        endpointPath = "/databricks_query";
+    }
+
     const url = `${baseUrl}${endpointPath}`;
 
     try {
@@ -34,7 +45,7 @@ export const streamProcessQuery = async (
                 "Content-Type": "application/json",
                 Accept: "application/x-ndjson",
             },
-            body: JSON.stringify({ question }),
+            body: JSON.stringify({ question, session_id: sessionId }),
         });
 
         if (!response.ok) {

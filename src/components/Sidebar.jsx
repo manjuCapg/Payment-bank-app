@@ -31,7 +31,10 @@ const Sidebar = ({
     }
   }, [chatHistory, isLoading]);
 
-  const isDbvalid = selectedDb === "Big Query DB" || selectedDb === "Mongo DB";
+  const isDbvalid =
+    selectedDb === "Big Query DB" ||
+    selectedDb === "Mongo DB" ||
+    selectedDb === "Databricks DB";
 
   const handleSubmit = (e, customQuery = null) => {
     if (e && e.preventDefault) e.preventDefault();
@@ -97,8 +100,8 @@ const Sidebar = ({
       followUpIndex !== -1
         ? followUpIndex
         : analysisIndex !== -1
-        ? analysisIndex
-        : -1;
+          ? analysisIndex
+          : -1;
     return splitIndex !== -1 ? text.slice(0, splitIndex).trim() : text;
   };
 
@@ -134,11 +137,10 @@ const Sidebar = ({
               className={`flex ${msg.isUser ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`px-4 py-2 rounded-lg max-w-md shadow ${
-                  msg.isUser
+                className={`px-4 py-2 rounded-lg max-w-md shadow ${msg.isUser
                     ? "bg-green-600 text-white"
                     : "bg-gray-100 text-gray-800"
-                }`}
+                  }`}
               >
                 {msg.isUser ? msg.text : getMainAnswer(msg.text)}
               </div>

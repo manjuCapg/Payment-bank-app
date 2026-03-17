@@ -13,7 +13,7 @@ const mongoBase =
 
 const databricksBase =
     import.meta.env.MODE === "development"
-        ? "/mongoapi"
+        ? "/api"
         : "https://genaipayment-backend-719673130781.europe-west1.run.app/proxy/8000";
 
 export const streamProcessQuery = async (
@@ -109,26 +109,23 @@ function handleEvent(event, isMongo, { onStatus, onToken, onData }) {
         // BigQuery final data
         if (onData) onData({ tabularData: event.data, sqlQuery: event.sql, chatResponse: event.text });
     } else if (event.type === "final_result") {
-        // MongoDB final result
-        // Normalize if needed, similar to apiService.js
-        let tabularData = event.result || []; // Adjust based on actual payload structure
-        // apiService.js normalization logic:
-        // if (Array.isArray(data?.tabularData) && data.tabularData.length === 1 && Array.isArray(data.tabularData[0])) ...
-
-        // Check if event.result matches structure. The walkthrough says {"type": "final_result", ...}
-        // I'll assume the payload contains the data directly or in a property.
-        // Let's pass the whole event or extract likely fields. 
-        // Assuming event keys might be { result: [...], text: "...", ... }
-
-        // NOTE: apiService.js normalizes `tabularData`. 
-        // If backend "cloned" logic, likely structure is similar but wrapped in event.
-        // Let's pass it to onData.
-    } else if (event.type === "final_result") {
+        // Handle MongoDB and Databricks final result
         if (onData) {
+            // Normalize tabularData if it's nested (common in MongoDB response)
+            let tabularData = event.tabularData || event.result || [];
+            if (
+                isMongo &&
+                Array.isArray(tabularData) &&
+                tabularData.length === 1 &&
+                Array.isArray(tabularData[0])
+            ) {
+                tabularData = tabularData[0];
+            }
+
             onData({
-                tabularData: event.tabularData || [],
-                sqlQuery: event.sqlQuery || "",
-                chatResponse: event.chatResponse || ""
+                tabularData: tabularData,
+                sqlQuery: event.sqlQuery || event.sql || "",
+                chatResponse: event.chatResponse || event.text || ""
             });
         }
     } else if (event.type === "tool_call") {

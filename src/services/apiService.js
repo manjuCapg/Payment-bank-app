@@ -11,7 +11,10 @@ const mongoBase =
     ? "/mongoapi"
     : "https://genaipayment-backend-719673130781.europe-west1.run.app/proxy/8000";
 
-const databricksBase = ""; // Leave blank as requested
+const databricksBase =
+  import.meta.env.MODE === "development"
+    ? "/api"
+    : "https://genaipayment-backend-719673130781.europe-west1.run.app/proxy/8000";
 
 // Axios instances
 const bigQueryApi = axios.create({
